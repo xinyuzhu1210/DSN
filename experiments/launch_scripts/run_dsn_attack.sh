@@ -43,7 +43,7 @@ do
         --config.n_steps=500 \
         --config.data_offset=$data_offset \
         --config.test_steps=25 \
-        --config.batch_size=512 \
+        --config.batch_size=256 \
         --config.use_augmented_loss=True \
         --config.use_empty_system_prompt=False \
         --config.debug_mode=False \
