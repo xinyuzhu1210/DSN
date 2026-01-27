@@ -1237,7 +1237,7 @@ class MultiPromptAttack(object):
         control_weight=None,        # by default set to 0
         anneal=False,
         anneal_from=0,
-        prev_loss=np.inf,
+        prev_loss=np.infty,
         stop_on_success=True,
         test_steps=50,
         log_first=True,            # in the first step, firstly run 1 round of test and therefore there's a log
@@ -1658,7 +1658,7 @@ class ProgressiveMultiPromptAttack(object):
         num_workers = 1 if self.progressive_models else len(self.workers)
         step = 0
         stop_inner_on_success = self.progressive_goals   
-        loss = np.inf
+        loss = np.infty
 
         while step < n_steps:
 
@@ -1731,11 +1731,11 @@ class ProgressiveMultiPromptAttack(object):
             # handle the progressive goals situation
             if num_goals < len(self.goals):
                 num_goals += 1
-                loss = np.inf
+                loss = np.infty
             elif num_goals == len(self.goals):
                 if num_workers < len(self.workers):
                     num_workers += 1
-                    loss = np.inf
+                    loss = np.infty
                 elif num_workers == len(self.workers) and stop_on_success:
                     model_tests = attack.test_all()
                     attack.log(step, n_steps, self.control, loss, 0., model_tests, verbose=verbose)
@@ -1744,7 +1744,7 @@ class ProgressiveMultiPromptAttack(object):
                     if isinstance(control_weight, (int, float)) and incr_control:
                         if control_weight <= 0.09:
                             control_weight += 0.01
-                            loss = np.inf
+                            loss = np.infty
                             if verbose:
                                 print(f"Control weight increased to {control_weight:.5}")
                         else:
