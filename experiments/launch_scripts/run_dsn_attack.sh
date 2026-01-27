@@ -46,7 +46,7 @@ do
         --config.batch_size=256 \
         --config.use_augmented_loss=True \
         --config.use_empty_system_prompt=False \
-        --config.debug_mode=False \
+        --config.debug_mode=True \
         --config.augmented_loss_alpha=1.0 \
         --config.use_aug_sampling=False \
         --config.use_different_aug_sampling_alpha=False \

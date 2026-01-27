@@ -644,9 +644,6 @@ class AttackPrompt(object):
 
         # from the very begining of the system prompt to the end of target
         self.input_ids = torch.tensor(toks[:self._target_slice.stop], device='cpu')
-        print(self.input_ids[self._control_slice])
-        print(self._control_str)
-        print(self.input_ids[self._loss_slice])
         self.conv_template.messages = []
 
     @torch.no_grad()
@@ -1174,7 +1171,7 @@ class MultiPromptAttack(object):
             # seems like Llama3 tokenizer couldn't conduct tokenizer.decode in my machine #
             # though we could bypass it                                                   #
             # --------------------------------------------------------------------------- #
-            if "Meta-Llama-3" in self.para.model_paths[0]:
+            if "Llama-3" in self.para.model_paths[0]:
                 decoded_str = worker.tokenizer.convert_tokens_to_string(
                     worker.tokenizer.convert_ids_to_tokens(
                         control_cand[i]
