@@ -369,7 +369,7 @@ class AttackPrompt(object):
                 # to examine the slice correctness as you wish
                 pass
 
-        elif "Meta-Llama-3-" in self.para.model_paths[0]:        # covering only Llama3 model
+        elif "Llama-3-" in self.para.model_paths[0]:        # covering only Llama3 model
             self._user_role_slice = slice( None, 5 )
             # till the end of system prompt, leading to the begining of the goal
             # For Llama3, there's no default system prompt, such that no need to adptaively determine the user_role_slice
@@ -644,6 +644,9 @@ class AttackPrompt(object):
 
         # from the very begining of the system prompt to the end of target
         self.input_ids = torch.tensor(toks[:self._target_slice.stop], device='cpu')
+        print(self.input_ids[self._control_slice])
+        print(self._control_str)
+        print(self.input_ids[self._loss_slice])
         self.conv_template.messages = []
 
     @torch.no_grad()
@@ -878,7 +881,7 @@ class AttackPrompt(object):
 
     @property
     def control_str(self):
-        if "Meta-Llama-3" in self.para.model_paths[0]:
+        if "Llama-3" in self.para.model_paths[0]:
             return self.tokenizer.convert_tokens_to_string(
                 self.tokenizer.convert_ids_to_tokens(
                     self.input_ids[self._control_slice]
