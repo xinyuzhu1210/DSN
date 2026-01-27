@@ -308,7 +308,7 @@ class AttackPrompt(object):
         # Including gemma, llama3 and llama3.1                                 #
         # Thus, to config the slice file by tokenizer.applt_chat_template()    #
         # -------------------------------------------------------------------- #
-        elif "Meta-Llama-3.1-" in self.para.model_paths[0]:        # covering only Llama3.1 model
+        elif "Llama-3.1-" in self.para.model_paths[0]:        # covering only Llama3.1 model
             self._user_role_slice = slice( None, 5 )
             # till the end of system prompt, leading to the begining of the goal
             # For Llama3.1, there's no default system prompt, such that no need to adptaively determine the user_role_slice
