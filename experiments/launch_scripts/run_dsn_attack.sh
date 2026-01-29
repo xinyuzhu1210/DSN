@@ -27,7 +27,8 @@ fi
 # to ensure reproductivity, better set config.use_empty_system_prompt=False #
 # ------------------------------------------------------------------------- #
 
-for i in {1..5}
+# for i in {1..5}
+for i in {1}
 do
     python -u ../main.py \
         --config="../configs/transfer_${model}.py" \
