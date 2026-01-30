@@ -196,5 +196,7 @@ def main(_):
         del workers[0].model, attack
         torch.cuda.empty_cache()
 
+        print('evaluation ended')
+
 if __name__ == '__main__':
     app.run(main)
