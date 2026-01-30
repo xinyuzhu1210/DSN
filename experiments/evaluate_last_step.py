@@ -71,12 +71,12 @@ _test_prefixes = [
 
 # Select the target model for evaluating the jailbreak prompt suffix
 _MODELS = {
-    "gemma-2b-it": ['google/gemma-2b-it', {"use_fast": False}, "gemma"],
+    # "gemma-2b-it": ['google/gemma-2b-it', {"use_fast": False}, "gemma"],
     # "gemma-2-9b-it": ['google/gemma-2-9b-it', {"use_fast": False}, "gemma"],
     # "Llama-2-13b-chat-hf": ['meta-llama/Llama-2-13b-chat-hf', {"use_fast": False}, "llama-2"],
     # "LLaMA-2-7B": ["meta-llama/Llama-2-7b-chat-hf", {"use_fast": False}, "llama-2"],
     # "LLaMA-3-8B": ["meta-llama/Meta-Llama-3-8B-Instruct", {"use_fast": False}, "llama-3"],
-    # "LLaMA-3.1-8B": ["meta-llama/Llama-3.1-8B-Instruct", {"use_fast": False}, "llama-3"],
+    "LLaMA-3.1-8B": ["meta-llama/Llama-3.1-8B-Instruct", {"use_fast": False}, "llama-3"],
     # "Mistral-7B-Instruct-v0.2": ['mistralai/Mistral-7B-Instruct-v0.2', {"use_fast": False}, "mistral"],
     # "Mistral-7B-Instruct-v0.3": ['mistralai/Mistral-7B-Instruct-v0.3', {"use_fast": False}, "mistral"],
     # "Qwen2-7B-Instruct": ['Qwen/Qwen2-7B-Instruct', {"use_fast": False}, "qwen"],
@@ -97,7 +97,7 @@ def main(_):
         params.eval_target_folder_name = "evalLastStep"
     if params.eval_with_repeated_sys_prompt:
         params.eval_target_folder_name += "RepeatedSys"
-    params.logfile = params.logfile.replace('results', params.eval_target_folder_name)
+    params.logfile = params.logfile.replace('results_dsn', params.eval_target_folder_name)
     controls = log['controls']
     assert len(controls) > 0
     controls = controls[-1:]    # to evaluated only the last step suffix within the log file
