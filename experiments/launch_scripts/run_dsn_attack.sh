@@ -6,7 +6,7 @@ export WANDB_MODE=disabled
 # export TRANSFORMERS_CACHE='YOUR_PATH/huggingface'
 
 export n=25
-export model=llama31 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
+export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
 data_offset=0
 
 # Create results folder if it doesn't exist
@@ -27,8 +27,8 @@ fi
 # to ensure reproductivity, better set config.use_empty_system_prompt=False #
 # ------------------------------------------------------------------------- #
 
-for i in {1..5}
-# for i in {1}
+# for i in {1..5}
+for i in {1}
 do
     python -u ../main.py \
         --config="../configs/transfer_${model}.py" \
