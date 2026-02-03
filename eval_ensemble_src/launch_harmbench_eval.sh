@@ -6,7 +6,7 @@
 # ../experiments/evalLastStep/20260128-01:18:36 1E0/llama31_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260128-13:47:22 1E0/llama31_dsn_25_offset0.json
 STRING_ARRAY=(
-    '../experiments/evalLastStep/20260128-01:18:36 1E0/llama31_dsn_25_offset0.json'
+    '../experiments/evalLastStep/20260128-13:47:22 1E0/llama31_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
