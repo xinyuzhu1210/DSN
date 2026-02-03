@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export n=25
-export model=llama31 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
+export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
 
 # sample file path, select the corresponding file path please
 # llama31
@@ -16,7 +16,7 @@ export model=llama31 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, l
 # ../results_dsn/20260203-02:07:25 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json
 file_list=(
-    '../results_dsn/20260203-02:04:40 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260203-02:01:22 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"

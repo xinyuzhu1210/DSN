@@ -76,10 +76,10 @@ _MODELS = {
     # "Llama-2-13b-chat-hf": ['meta-llama/Llama-2-13b-chat-hf', {"use_fast": False}, "llama-2"],
     # "LLaMA-2-7B": ["meta-llama/Llama-2-7b-chat-hf", {"use_fast": False}, "llama-2"],
     # "LLaMA-3-8B": ["meta-llama/Meta-Llama-3-8B-Instruct", {"use_fast": False}, "llama-3"],
-    "LLaMA-3.1-8B": ["meta-llama/Llama-3.1-8B-Instruct", {"use_fast": False}, "llama-3"],
+    # "LLaMA-3.1-8B": ["meta-llama/Llama-3.1-8B-Instruct", {"use_fast": False}, "llama-3"],
     # "Mistral-7B-Instruct-v0.2": ['mistralai/Mistral-7B-Instruct-v0.2', {"use_fast": False}, "mistral"],
     # "Mistral-7B-Instruct-v0.3": ['mistralai/Mistral-7B-Instruct-v0.3', {"use_fast": False}, "mistral"],
-    # "Qwen2-7B-Instruct": ['Qwen/Qwen2-7B-Instruct', {"use_fast": False}, "qwen"],
+    "Qwen2-7B-Instruct": ['Qwen/Qwen2-7B-Instruct', {"use_fast": False}, "qwen"],
     # "vicuna-13b-v1.5":  ["lmsys/vicuna-13b-v1.5", {"use_fast": False}, "vicuna"],
     # "Vicuna-7B":  ["lmsys/vicuna-7b-v1.3", {"use_fast": False}, "vicuna"],
 }
