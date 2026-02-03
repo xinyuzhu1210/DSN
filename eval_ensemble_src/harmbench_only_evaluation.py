@@ -125,6 +125,7 @@ def main():
             json_file, ensure_ascii=False, indent=4)
         print(f"{new_eval_file_path} has been saved, time taken is {time.time() - start} seconds, now is {current_time}")
 
+    print(f"Refusal Matching Score: {test_jb_ASR} / {len(EM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
     print('Harmbench evaluation is done!')
 
 if __name__ == '__main__':
