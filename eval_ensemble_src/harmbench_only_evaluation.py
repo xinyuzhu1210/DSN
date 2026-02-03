@@ -29,7 +29,7 @@ def get_model_name(log_file_path):
     elif "vicuna" in log_file_path:
         return 'Vicuna-7B'
     elif "llama31" in log_file_path:
-        return 'meta-llama/Llama-3.1-8B-Instruct'
+        return 'LLaMA-3.1-8B'
     elif "llama3" in log_file_path:
         return 'LLaMA-3-8B'
     elif "llama2-13b" in log_file_path:
