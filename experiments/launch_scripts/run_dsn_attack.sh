@@ -6,7 +6,7 @@ export WANDB_MODE=disabled
 # export TRANSFORMERS_CACHE='YOUR_PATH/huggingface'
 
 export n=25
-export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
+export model=llama3 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
 data_offset=0
 
 # Create results folder if it doesn't exist
@@ -44,7 +44,7 @@ do
         --config.n_steps=500 \
         --config.data_offset=$data_offset \
         --config.test_steps=25 \
-        --config.batch_size=256 \
+        --config.batch_size=512 \
         --config.use_augmented_loss=True \
         --config.use_empty_system_prompt=False \
         --config.debug_mode=False \
