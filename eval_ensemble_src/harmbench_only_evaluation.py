@@ -55,7 +55,7 @@ def main():
     assert isinstance(random_seed, int)
     assert isinstance(log_file_path, str)
 
-    if os.path.exists(os.path.join(os.path.dirname(log_file_path), "eval_ensemble_results_NLI_GPT_HarmBench.json")):
+    if os.path.exists(os.path.join(os.path.dirname(log_file_path), "results_HarmBench.json")):
         print("Already run...")
         return None
 
