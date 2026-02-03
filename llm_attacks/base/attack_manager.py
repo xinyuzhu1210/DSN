@@ -272,7 +272,7 @@ class AttackPrompt(object):
                 # to examine the slice correctness as you wish
                 pass
 
-        elif self.conv_template.name == 'qwen':
+        elif self.conv_template.name == 'qwen-7b-chat':
             self.conv_template.messages = []
 
             self.conv_template.append_message(self.conv_template.roles[0], "!")
