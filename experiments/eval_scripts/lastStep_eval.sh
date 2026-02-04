@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export n=25
-export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
+export model=llama3 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llama31, mistralv02, mistralv03, qwen, vicuna_13b, vicuna
 
 # sample file path, select the corresponding file path please
 # llama31
@@ -15,8 +15,19 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 # ../results_dsn/20260203-02:06:12 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:07:25 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json
+# llama3
+# ../results_dsn/20260203-20:01:23 1E0/llama3_dsn_25_offset0.json
+# ../results_dsn/20260203-20:05:44 1E0/llama3_dsn_25_offset0.json
+# ../results_dsn/20260203-20:07:35 1E0/llama3_dsn_25_offset0.json
+# ../results_dsn/20260203-20:09:50 1E0/llama3_dsn_25_offset0.json
+# ../results_dsn/20260203-20:11:07 1E0/llama3_dsn_25_offset0.json
+
 file_list=(
-    '../results_dsn/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260203-20:01:23 1E0/llama3_dsn_25_offset0.json'
+    '../results_dsn/20260203-20:05:44 1E0/llama3_dsn_25_offset0.json'
+    '../results_dsn/20260203-20:07:35 1E0/llama3_dsn_25_offset0.json'
+    '../results_dsn/20260203-20:09:50 1E0/llama3_dsn_25_offset0.json'
+    '../results_dsn/20260203-20:11:07 1E0/llama3_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
