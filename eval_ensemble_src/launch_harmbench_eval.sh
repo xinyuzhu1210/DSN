@@ -23,12 +23,25 @@
 # ../experiments/evalJBBLastStep/20260203-02:06:12 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260203-02:07:25 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json
+# llama3
+# ../experiments/evalLastStep/20260203-20:01:23 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260203-20:05:44 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260203-20:07:35 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260203-20:09:50 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260203-20:11:07 1E0/llama3_dsn_25_offset0.json
+# -JBB llama3 --> JBB True
+# ../experiments/evalJBBLastStep/20260203-20:01:23 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260203-20:05:44 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260203-20:07:35 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260203-20:09:50 1E0/llama3_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260203-20:11:07 1E0/llama3_dsn_25_offset0.json
+
 STRING_ARRAY=(
-    '../experiments/evalJBBLastStep/20260203-02:01:22 1E0/qwen_dsn_25_offset0.json'
-    '../experiments/evalJBBLastStep/20260203-02:04:40 1E0/qwen_dsn_25_offset0.json'
-    '../experiments/evalJBBLastStep/20260203-02:06:12 1E0/qwen_dsn_25_offset0.json'
-    '../experiments/evalJBBLastStep/20260203-02:07:25 1E0/qwen_dsn_25_offset0.json'
-    '../experiments/evalJBBLastStep/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json'
+    '../experiments/evalLastStep/20260203-20:01:23 1E0/llama3_dsn_25_offset0.json'
+    '../experiments/evalLastStep/20260203-20:05:44 1E0/llama3_dsn_25_offset0.json'
+    '../experiments/evalLastStep/20260203-20:07:35 1E0/llama3_dsn_25_offset0.json'
+    '../experiments/evalLastStep/20260203-20:09:50 1E0/llama3_dsn_25_offset0.json'
+    '../experiments/evalLastStep/20260203-20:11:07 1E0/llama3_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
