@@ -8,6 +8,7 @@ from ml_collections import config_flags
 from pathlib import Path
 import os
 import math
+from transformers.trainer_utils import set_seed 
 
 from llm_attacks import get_goals_and_targets, get_workers
 
@@ -25,7 +26,7 @@ def main(_):
     mp.set_start_method('spawn')
 
     params = _CONFIG.value
-
+    set_seed(params.random_seed_for_sampling_targets)
     attack_lib = dynamic_import(f'llm_attacks.{params.attack}')
 
     print(params)
