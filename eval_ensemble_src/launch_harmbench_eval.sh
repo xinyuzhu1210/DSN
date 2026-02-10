@@ -61,13 +61,13 @@
 # ../experiments/evalJBBLastStep/20260210-15:08:15 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalLastStep/20260209-23:12:54 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalLastStep/20260210-15:16:19 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalLastStep/20260210-14:50:10 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalLastStep/20260210-15:06:41 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalLastStep/20260210-15:08:15 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260209-23:12:54 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260210-15:16:19 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260210-14:50:10 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260210-15:06:41 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260210-15:08:15 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py -1 "$STR" False
+  python harmbench_only_evaluation.py -1 "$STR" True
 done                              # random_seed, logfile, UseJBB
