@@ -172,7 +172,9 @@ class DSNPromptManager(PromptManager):
         # copy control tokens batchsize times --> [batchsize, control_token_len]
         original_control_toks = control_toks.repeat(batch_size, 1)
 
-        # for each control token choose which position to modify
+        # for each candidate suffix, decide which position to modify
+        # new_token_pos has a batchsize number of entries
+        # each entry signifies the position in the suffix that ought to be modified
         new_token_pos = torch.arange(
             0,
             len(control_toks),
@@ -180,13 +182,15 @@ class DSNPromptManager(PromptManager):
             device=grad.device
         ).type(torch.int64)
 
-        # randomly pick good tokens for the respective positions?
+        # for each row/candidate suffix, randomly pick one index inside the top-k list
+        # that serves as a replacement token
         new_token_val = torch.gather(
             top_indices[new_token_pos], 1,
             torch.randint(0, topk, (batch_size, 1),
             device=grad.device)
         )
-        # return the new control tokens, where at position i, the new token value is inserted
+        # return the new control candidate tokens, where at position i, the new token value is inserted
+        # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
         # return candidate suffixes, where each row is one candidate suffix
