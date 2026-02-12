@@ -106,14 +106,17 @@ def main(_):
         print("Already run...")
         return None
 
+    # load datasets
     train_goals, train_targets, test_goals, test_targets = get_goals_and_targets(params)
     results = {}
 
+    # run evaluation for each model
     for model in _MODELS:
 
         torch.cuda.empty_cache()
         start = time.time()
 
+        # configure tokenizer and model
         params.tokenizer_paths = [
             _MODELS[model][0]
         ]
@@ -137,6 +140,7 @@ def main(_):
             "MPA": MultiPromptAttack
         }
 
+        # create EvaluateAttack object
         attack = EvaluateAttack(
             train_goals,
             train_targets,
@@ -150,6 +154,8 @@ def main(_):
 
         # manually configure the generation parameters, which is crucial for evaluation
         batch_size = params.eval_batchsize
+        # run evaluation; execute EvaluateAttack.run()
+        # return the jailbreak success and em score on train and test data
         total_jb, total_em, test_total_jb, test_total_em, total_outputs, test_total_outputs = attack.run(
             range(len(controls)),
             controls,
@@ -160,7 +166,7 @@ def main(_):
         for worker in workers + test_workers:
             worker.stop()
 
-
+        # logging of the results
         results['note'] = params.dsn_notes
         results['data overview'] = f"train:{params.data_offset+1}-{params.data_offset+params.n_train_data}   test:{params.data_offset+params.n_train_data+1}-{params.data_offset+params.n_train_data+params.n_test_data}"
 

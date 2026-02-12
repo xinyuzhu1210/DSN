@@ -212,6 +212,7 @@ class AttackPrompt(object):
         self.conv_template = conv_template
         self.test_prefixes = test_prefixes
         self.logger = None
+        # para is params, the parameters given to the class
         self.para = para
         assert self.para is not None
 
@@ -219,29 +220,41 @@ class AttackPrompt(object):
         self.test_prefixes_toks = []
 
         for test_str in self.test_prefixes:
+            # converts a text string (in this case a string in test_prefixes) in a sequence of ids (token ids)
             ids = tokenizer.encode(test_str, add_special_tokens=False)
+            # add the ids to the list
             self.test_prefixes_toks.append(ids)
+            # add the length of the ids to the list
             self.test_token_length.append(len(ids))
 
         self.conv_template.messages = []
 
+        # nr of tokens in the target + 2 extra as a buffer
         self.test_new_toks = len(self.tokenizer(self.target).input_ids) + 2 # buffer
+        # for each prefix in test_prefixes, compute the max nr of tokens needed among 
+        # the target + buffer and the prefix string
         for prefix in self.test_prefixes:
             self.test_new_toks = max(self.test_new_toks, len(self.tokenizer.encode(prefix, add_special_tokens=False)))
 
+        # calls the _update_ids() function
         self._update_ids()
 
     def _update_ids(self):
 
+        # add user message and assistent(target) message
         self.conv_template.append_message(self.conv_template.roles[0], f"{self.goal} {self.control}")
         self.conv_template.append_message(self.conv_template.roles[1], f"{self.target}")
 
+        # turn conversation into one string
+        # turn that string into token ids
         prompt = self.conv_template.get_prompt()
         toks = self.tokenizer.encode(prompt)
 
         encoding = self.tokenizer(prompt)
         toks = encoding.input_ids
 
+        # for each model, builds a chatprompt, convert it into tokens, and figures out which 
+        # tokens belongs to which part (e.g. user role, goal, control, assistent, target etc)
         if self.conv_template.name == 'mistral':    # for mistral families
             self.conv_template.messages = []
 
@@ -492,6 +505,7 @@ class AttackPrompt(object):
             self.conv_template.messages = []
 
             if transformers.__version__ == "4.28.1":    # legency version, to reproduce resutls from GCG and DSN paper
+                # eval_with_repeated_sys_prompt is False in DSN case
                 if not self.para.eval_with_repeated_sys_prompt:
                     self.conv_template.append_message(self.conv_template.roles[0], "!")
                     toks = self.tokenizer(self.conv_template.get_prompt()).input_ids
@@ -648,10 +662,12 @@ class AttackPrompt(object):
 
     @torch.no_grad()
     def generate(self, model, gen_config=None):
+        # set generation config, if no config is provided
         if gen_config is None:
             gen_config = model.generation_config
             gen_config.max_new_tokens = 64
 
+        # print warning if generation is too long
         if gen_config.max_new_tokens > 64:
             print(f'WARNING: max_new_tokens > 64 may cause testing to slow down. Current max_new_tokens is {gen_config.max_new_tokens}')
 
@@ -659,14 +675,17 @@ class AttackPrompt(object):
         input_ids = self.input_ids[:self._assistant_role_slice.stop].to(model.device).unsqueeze(0)
         attn_masks = torch.ones_like(input_ids).to(model.device)
 
+        # Huggingface generate() func returns input prompt and generated token ids
         output_ids = model.generate(input_ids,
                                     attention_mask=attn_masks,
                                     generation_config=gen_config,
                                     pad_token_id=self.tokenizer.pad_token_id)[0]
 
+        # return only the generated token ids, not the prompt
         return output_ids[self._assistant_role_slice.stop:]
 
     def generate_str(self, model, gen_config=None):
+        # calls the generate() func above, get the token_ids and convert it into text
         return self.tokenizer.decode(self.generate(model, gen_config))
 
     def test(self, model, gen_config=None):
@@ -674,8 +693,10 @@ class AttackPrompt(object):
         if gen_config is None:
             gen_config = model.generation_config
             gen_config.max_new_tokens = self.test_new_toks
+        # generate the model's response text
         gen_str = self.generate_str(model, gen_config).strip()  # to generate with goal and adv suffix provided
 
+        # logging
         if self.logger is None:
             print(f"gen_max_tokens is {self.test_new_toks} Testing with gen_config specified...")
             print(gen_str)
@@ -687,13 +708,14 @@ class AttackPrompt(object):
             self.logger.info(gen_str)
             print()
 
-
+        # true if no refusal prefixes/phrases appeared in the model's response text
         jailbroken = not any([prefix in gen_str for prefix in self.test_prefixes])
         em = self.target in gen_str     # em might be refering 'exact match'
         return jailbroken, int(em)
 
     @torch.no_grad()
     def test_loss(self, model):
+        # calls the logits() func below, obtain the logits and ids, and compute the target loss 
         logits, ids = self.logits(model, return_ids=True)
         return self.target_loss(logits, ids).mean().item()
 
@@ -706,6 +728,7 @@ class AttackPrompt(object):
         pad_tok = -1
         if test_controls is None:
             test_controls = self.control_toks
+        # convert control string into token ids
         if isinstance(test_controls, torch.Tensor):
             if len(test_controls.shape) == 1:
                 test_controls = test_controls.unsqueeze(0)
@@ -739,7 +762,9 @@ class AttackPrompt(object):
                 f"got {test_ids.shape}"
             ))
 
+        # find the location in the prompt of the adversarial suffix 
         locs = torch.arange(self._control_slice.start, self._control_slice.stop).repeat(test_ids.shape[0], 1).to(model.device)
+        # replace the original control token region with the test ids
         ids = torch.scatter(
             self.input_ids.unsqueeze(0).repeat(test_ids.shape[0], 1).to(model.device),
             1,
@@ -754,10 +779,12 @@ class AttackPrompt(object):
         if self.para.debug_mode:
             pass
 
+        # run the model and return the logits and test ids
         if return_ids:
             del locs, test_ids ; gc.collect()
             torch.cuda.empty_cache()
             return model(input_ids=ids, attention_mask=attn_mask).logits, ids
+        # run the model and return the logits
         else:
             del locs, test_ids
             logits = model(input_ids=ids, attention_mask=attn_mask).logits
@@ -774,13 +801,18 @@ class AttackPrompt(object):
 
     def target_loss(self, logits, ids):
         crit = nn.CrossEntropyLoss(reduction='none')
+        # define target slice
         loss_slice = slice(self._target_slice.start-1, self._target_slice.stop-1)
+        # compute loss: how well does the model predict the target sequence?
         loss = crit(logits[:,loss_slice,:].transpose(1,2), ids[:,self._target_slice])
 
+        # True in DSN
         if self.para.use_target_loss_cosine_decay:  # the loss will become affirmative loss only after go through Cosine Decay
             loss = self.apply_cosine_decay(loss)
 
+        # mean over the tokens
         loss = loss.mean(-1)
+        # loss per example
         return loss
 
     def dsn_refusal_loss(self, logits, ids):
@@ -809,36 +841,44 @@ class AttackPrompt(object):
                 return loss.squeeze()
         crit = UnlikelihoodLoss()
 
+        # loop over each refusal prefix/phrase
         for j_in_algorithm in range(len(self.test_prefixes)):
             key_word_length = self.test_token_length[j_in_algorithm]
             if self.para.debug_mode:
                 pass
 
             step_count = 0
+            # slide over the output positions
             for loss_start in range(self._target_slice.start-1 , 99999):
                 if loss_start + key_word_length > logits.shape[1]:
                     break
                 else:
                     step_count += 1
 
+                # extract a chuck of logits from the output that has the same lengths as the refusal phrase
                 refusal_loss_slice = slice(loss_start, loss_start+key_word_length)
 
                 bs = logits.shape[0]
+                # build target refusal tokens; e.g. tokens we don't want to generate
                 cross_loss_target = torch.tensor(self.test_prefixes_toks[j_in_algorithm]).unsqueeze(0).to(logits.device)
                 cross_loss_target = cross_loss_target.repeat(bs, 1)
 
+                # compute unlikelihood loss, which gives a high loss if the model assigns a high prob to the refusal tokens
                 temp_loss = crit(logits[:,refusal_loss_slice,:].transpose(1,2), cross_loss_target)
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 loss += temp_loss.mean(-1)
                 count_loss += 1
 
+        # average the loss over all refusal phrases
         loss = loss/count_loss
         return loss * self.para.augmented_loss_alpha
 
     def control_loss(self, logits, ids):
         crit = nn.CrossEntropyLoss(reduction='none')
+        # slice control region
         loss_slice = slice(self._control_slice.start-1, self._control_slice.stop-1)
+        # compute loss: how well does the model predict the control tokens
         loss = crit(logits[:,loss_slice,:].transpose(1,2), ids[:,self._control_slice])
         return loss
 
@@ -914,6 +954,7 @@ class AttackPrompt(object):
 
     @property
     def eval_str(self):
+        # convert the prompt token ids to text/string
         return self.tokenizer.decode(self.input_ids[:self._assistant_role_slice.stop]).replace('<s>','').replace('</s>','')
 
 
@@ -961,6 +1002,9 @@ class PromptManager(object):
             raise ValueError("Must provide at least one goal, target pair")
 
         self.tokenizer = tokenizer
+        # refers to the DSNAttackPrompt class from dsn_attack.py
+        # which in turn also refers to the AttackPrompt class from this file
+        # it initializes an attackprompt for each goal&target 
         self._prompts = [
             managers['AP'](
                 goal,
@@ -993,16 +1037,20 @@ class PromptManager(object):
         ]
 
     def test(self, model, gen_config=None):
+        # refers to the test func from AttackPrompt
         ret = [prompt.test(model, gen_config) for prompt in self._prompts]
         return ret
 
     def test_loss(self, model):
+        # refers to the test_loss func from AttackPrompt
         return [prompt.test_loss(model) for prompt in self._prompts]
 
     def grad(self, model):
+        # refers to the grad() function of AttackPrompt
         return sum([prompt.grad(model) for prompt in self._prompts])
 
     def logits(self, model, test_controls=None, return_ids=False):
+        # refers to the logits() function of AttackPrompt
         vals = [prompt.logits(model, test_controls, return_ids) for prompt in self._prompts]
         if return_ids:
             return [val[0] for val in vals], [val[1] for val in vals]
@@ -1117,6 +1165,9 @@ class MultiPromptAttack(object):
         self.models = [worker.model for worker in workers]
         self.logfile = logfile
         self.para=para
+        # refers to the DSNPromptManager class from dsn_attack.py
+        # which in turn also refers to the PromptManager class from this file
+        # it initializes an promptmanager for each worker
         self.prompts = [
             managers['PM'](
                 goals,
@@ -1139,6 +1190,7 @@ class MultiPromptAttack(object):
     def control_str(self):
         return self.prompts[0].control_str
 
+    # sets the same string/control on all prompts
     @control_str.setter
     def control_str(self, control):
         for prompts in self.prompts:
@@ -1165,6 +1217,7 @@ class MultiPromptAttack(object):
         cands = []
         worker = self.workers[worker_index]
 
+        # for each candidate
         for i in range(control_cand.shape[0]):
 
             # --------------------------------------------------------------------------- #
@@ -1180,6 +1233,7 @@ class MultiPromptAttack(object):
             else:
                 decoded_str = worker.tokenizer.decode(control_cand[i], skip_special_tokens=True).strip()
 
+            # four boolean checks to check whether the candidates are tokenizer consistent and boundary safe
             if filter_cand:
                 """
                 By inspecting the following four DSN-introduced boolean check,
@@ -1222,6 +1276,7 @@ class MultiPromptAttack(object):
                 cands = cands + [cands[-1]] * (len(control_cand) - len(cands))
             else:
                 assert False, "Warning: no condidate control string is valid. Should better check the four listed boolean."
+        # return filtered candidates
         return cands
 
     def step(self, *args, **kwargs):
@@ -1246,9 +1301,12 @@ class MultiPromptAttack(object):
     ):
 
         def P(e, e_prime, k):
+            # if new loss is better, always accept
+            # if it is worse, accept it with a probability that declines over time
             T = max(1 - float(k+1)/(n_steps+anneal_from), 1.e-7)
             return True if e_prime < e else math.exp(-(e_prime-e)/T) >= random.random()
 
+        # target and control weight are by default set to 1 and 0 respectively
         if target_weight is None:
             target_weight_fn = lambda _: 1
         elif isinstance(target_weight, (int, float)):
@@ -1260,11 +1318,17 @@ class MultiPromptAttack(object):
 
         steps = 0
         loss = best_loss = 1e6
+        # refers to the control_str function above, which returns self.prompts[0].control_str
+        # also sets the control for all prompts
         best_control = self.control_str
         runtime = 0.
 
+        # this will be run in dsn
         if self.logfile is not None and log_first:
+            # uses the test_all() func below, which in turn uses the test() func
+            # get the results before any training/optimization is done
             model_tests = self.test_all()
+            # give test_all() results to the log func and log the results
             self.log(anneal_from,
                      n_steps+anneal_from,
                      self.control_str,
@@ -1273,6 +1337,7 @@ class MultiPromptAttack(object):
                      model_tests,
                      verbose=verbose)
 
+        # suffix optimization loop
         for i in range(n_steps):    # e.g. n_steps = 500
 
             # --------------------------------------------------------------------------------- #
@@ -1282,6 +1347,9 @@ class MultiPromptAttack(object):
             # for reporting the evaluation results utilized Refusal Matching metric             #
             # shall better utilize the scripts in experiments/eval_scripts folder               #
             # --------------------------------------------------------------------------------- #
+           
+            # returns jailbreakrate and em score based on the workers/models and given prompts
+            # loss computation is set by default to False here
             model_tests_jb, model_tests_mb, _ = self.test(self.workers, self.prompts)
 
             temp_model_tests_jb = np.array(model_tests_jb)
@@ -1291,6 +1359,7 @@ class MultiPromptAttack(object):
             del temp_model_tests_jb, model_tests_mb
 
             ''' this stop_on_success mechanism is tricyk, only work in progressive_goals mode '''
+            # is False in dsn
             if stop_on_success:
                 if all(all(tests for tests in model_test) for model_test in model_tests_jb):
                     break
@@ -1299,6 +1368,7 @@ class MultiPromptAttack(object):
             start = time.time()
             torch.cuda.empty_cache()
 
+            # main optimization step: generate many candidate suffixes, compare their losses and pick/return the best one
             control, loss, step_whole_sampled_ctrl = self.step(
                 batch_size=batch_size,
                 topk=topk,
@@ -1312,16 +1382,20 @@ class MultiPromptAttack(object):
             )
             runtime = time.time() - start
 
+            # anneal is False in DSN, so keep_control = True
             keep_control = True if not anneal else P(prev_loss, loss, i+anneal_from)
+            # sets the control string on all prompts to the returned best suffix from the step() function
             if keep_control:
                 self.control_str = control
 
+            # only the best suffix and loss are remembered
             if loss < best_loss:
                 best_loss = loss
                 best_control = control
 
             temp_str = f"Step:{i+1:>4}/{n_steps:>4}\tCurrent Loss: {loss:.5}\tBest Loss: {best_loss:.5}\t{temp_JB_str}\n"
 
+            # logging
             if self.logger is None:
                 print(temp_str)
             else:
@@ -1333,18 +1407,26 @@ class MultiPromptAttack(object):
                 # only test the best suffix at some specifed steps
                 last_control = self.control_str
                 self.control_str = best_control
+                # test when self.control_str was the best_control
                 model_tests = self.test_all()
                 self.log(i+1+anneal_from, n_steps+anneal_from, self.control_str, best_loss, runtime, model_tests, verbose=verbose, step_whole_sampled_ctrl=step_whole_sampled_ctrl)
+                # set self.control_str back to the last returned control string from the step() function
                 self.control_str = last_control
 
+        # returns the suffix and loss of the last step() function, and nr of steps taken
         return self.control_str, loss, steps
 
     def test(self, workers, prompts, include_loss=False):
+        # run model j on prompt j in test mode
+        # workers is a list of ModelWorker class objects
         for j, worker in enumerate(workers):
+            # do the test() func from AttackPrompt on the prompts, and calculate the jailbroken and em rate
             worker(prompts[j], "test", worker.model)
 
+        # each worker stores its output in worker.results() 
         model_tests = np.array([worker.results.get() for worker in workers])
         flag = '# ---------------------- MPA test function debug here ---------------------- #'
+        # get the jailbreakrate and EM from each result
         model_tests_jb = model_tests[...,0].tolist()
         model_tests_mb = model_tests[...,1].tolist()
 
@@ -1356,13 +1438,17 @@ class MultiPromptAttack(object):
         model_tests_loss = []
         if include_loss:
             for j, worker in enumerate(workers):
+                # if include loss, run inference again in test_loss mode 
+                # --> refers indirectly to test_loss functions of PromptManager and AttackPrompt
                 worker(prompts[j], "test_loss", worker.model)
+            # collect the results including the losses
             model_tests_loss = [worker.results.get() for worker in workers]
 
         return model_tests_jb, model_tests_mb, model_tests_loss
 
     def test_all(self):
         all_workers = self.workers + self.test_workers
+        # build prompts using the PromptManager class
         all_prompts = [
             self.managers['PM'](
                 self.goals + self.test_goals,
@@ -1377,6 +1463,7 @@ class MultiPromptAttack(object):
             )
             for worker in all_workers
         ]
+        # run model on the prompts
         ret = self.test(all_workers, all_prompts, include_loss=True)
         flag = '# ------------------------ MPA test_all debug here ------------------------ #'
         print(flag)
@@ -1385,13 +1472,19 @@ class MultiPromptAttack(object):
             print(temp, f"\tsum: {np.array(temp).sum()}")
         print(flag)
         print()
+        # return test() outputs
         return ret
 
     def parse_results(self, results):
         # to return the expected output in the four distinct settings
-        # namely, id -> id , id -> od , od -> id , od -> od
+        # namely, id -> id (in-distribution to in-distribution), id -> od , od -> id , od -> od
+        # id is results related to train workers, goals and targets
+        # od is results related to test workeres, goals, and targets
         x = len(self.workers)
         i = len(self.goals)
+        # x = nr train workers
+        # i = nr train goals
+        # results is all results (train and test)
         id_id = results[:x, :i].sum()
         id_od = results[:x, i:].sum()
         od_id = results[x:, :i].sum()
@@ -1409,9 +1502,12 @@ class MultiPromptAttack(object):
         verbose=True
         ):
 
+        # results from the test_all() function
         prompt_tests_jb, prompt_tests_mb, model_tests_loss = list(map(np.array, model_tests))
+        # get all goals and workers
         all_goal_strs = self.goals + self.test_goals
         all_workers = self.workers + self.test_workers
+        # for each goal, organize in a dictionary how each model did during testing
         tests = {
             all_goal_strs[i]:
             [
@@ -1422,6 +1518,7 @@ class MultiPromptAttack(object):
         }
 
         # parse_results get the results under 4 distinct settings
+        # i.e. count the results under different settings of in-distribution and out-of-distribution data samples
         n_passed = self.parse_results(prompt_tests_jb)
         n_em = self.parse_results(prompt_tests_mb)
         n_loss = self.parse_results(model_tests_loss)
@@ -1434,6 +1531,7 @@ class MultiPromptAttack(object):
         tests['n_loss'] = n_loss
         tests['total'] = total_tests
 
+        # log additional results and store it in a file
         with open(self.logfile, 'r') as f:
             log = json.load(f)
 
@@ -1448,6 +1546,7 @@ class MultiPromptAttack(object):
         with open(self.logfile, 'w') as f:
             json.dump(log, f, indent=4, cls=NpEncoder)
 
+        # print summary of the test results
         if verbose:
             output_str = ''
             for i, tag in enumerate(['id_id', 'id_od', 'od_id', 'od_od']):
@@ -1654,23 +1753,28 @@ class ProgressiveMultiPromptAttack(object):
             with open(self.logfile, 'w') as f:
                 json.dump(log, f, indent=4)
 
+        # in DSN case progressive and models is False, hence num_goals = 25 and num_workers is len(workers)
         num_goals = 1 if self.progressive_goals else len(self.goals)
         num_workers = 1 if self.progressive_models else len(self.workers)
         step = 0
         stop_inner_on_success = self.progressive_goals   
         loss = np.infty
 
+        # in DSN: while step < 500
         while step < n_steps:
 
             flag = '# -------------- Goal&target seperation line ------------- #'
             if self.logger is None:
                 print(flag)
+                # DSN case: 25/25
                 print(f"Goal {num_goals}/{len(self.goals)}")
 
+                # print each goal from the dataset
                 print("The goal is:")
                 for temp_obj in self.goals[:num_goals]:
                     print(temp_obj)
 
+                # print each target from the dataset
                 print("The target is:")
                 for temp_obj in self.targets[:num_goals]:
                     print(temp_obj)
@@ -1688,6 +1792,9 @@ class ProgressiveMultiPromptAttack(object):
                 self.logger.info(flag)
                 self.logger.info(' ')
 
+            # DSN case: refers to the DSNMultiPromptAttack class from dsn_attack.py
+            # which in turn refers to the MultiPromptAttack class in this file
+            # these lines initialize the MultiPromptAttack class
             attack = self.managers['MPA'](
                 self.goals[:num_goals],
                 self.targets[:num_goals],
@@ -1704,10 +1811,14 @@ class ProgressiveMultiPromptAttack(object):
                 **self.mpa_kwargs
             )
 
+            # DSN case: stop_on_succes is already set to False
             # if all the goals are obtained, then this will be turned False
             if num_goals == len(self.goals) and num_workers == len(self.workers):
                 stop_inner_on_success = False
 
+            # executes the run function from the MultiPromptAttack class
+            # the run function uses a step function, which is defined in dsn_attack.py
+            # the step function is one optimization step of the suffix
             control, loss, inner_steps = attack.run(
                 n_steps=n_steps-step,
                 batch_size=batch_size,
@@ -1750,6 +1861,7 @@ class ProgressiveMultiPromptAttack(object):
                         else:
                             stop_inner_on_success = False
 
+        # return the final control suffix that was obtained from MultiPromptAttack.run()
         return self.control, step
 
 
@@ -1822,16 +1934,20 @@ class EvaluateAttack(object):
 
     @torch.no_grad()
     def run(self, steps, controls, batch_size, max_new_len=60, verbose=True):
-
+        # get model and tokenizer
         model, tokenizer = self.workers[0].model, self.workers[0].tokenizer
         tokenizer.padding_side = 'left'
 
         total_jb, total_em, total_outputs = [],[],[]
         test_total_jb, test_total_em, test_total_outputs = [],[],[]
         prev_control = 'haha'
+        # loop over the jailbreak suffixes
         for step, control in enumerate(controls):
+            # loop over the train and test data; so it first evaluates on the train data, then the test data
             for (mode, goals, targets) in zip(*[('Train', 'Test'), (self.goals, self.test_goals), (self.targets, self.test_targets)]):
+                # makes sure the evaluation will not be done on two identical adversarial suffixes
                 if control != prev_control and len(goals) > 0:
+                    # creates a MultiPromptAttack object
                     attack = self.managers['MPA'](
                         goals,
                         targets,
@@ -1843,19 +1959,25 @@ class EvaluateAttack(object):
                         para = self.para,
                         **self.mpa_kewargs
                     )
+                    # extract all prompts
                     all_inputs = [p.eval_str for p in attack.prompts[0]._prompts]
+                    # get the max tokens per prompt 
                     max_new_tokens = [p.test_new_toks for p in attack.prompts[0]._prompts]
+                    # get all targets
                     targets = [p.target for p in attack.prompts[0]._prompts]
                     all_outputs = []
                     if len(all_inputs) // batch_size == len(all_inputs) / batch_size:
                         temp_length = len(all_inputs) // batch_size
                     else:
                         temp_length = len(all_inputs) // batch_size + 1
+                    # iterate over the batches
                     for i in tqdm(range(temp_length)):
+                        # get prompt batch
                         batch = all_inputs[i*batch_size:(i+1)*batch_size]
                         batch_max_new = max_new_tokens[i*batch_size:(i+1)*batch_size]
 
                         batch_inputs = tokenizer(batch, padding=True, truncation=False, return_tensors='pt')
+                        # get prompt input ids
                         batch_input_ids = batch_inputs['input_ids'].to(model.device)
                         batch_attention_mask = batch_inputs['attention_mask'].to(model.device)
 
@@ -1863,11 +1985,14 @@ class EvaluateAttack(object):
 
                         max_trial_times = 5
                         succeed_generate = False
+                        # tries generation 5 times, in case model.generate goes wrong
                         while max_trial_times>0 :
                             try:
+                                # token ids of the generated response 
                                 outputs = model.generate(
                                     batch_input_ids,
                                     attention_mask=batch_attention_mask,
+                                    # compute generation length, prevents truncation
                                     max_new_tokens=max(max_new_len, max(batch_max_new)),
                                     pad_token_id=tokenizer.pad_token_id,
                                     )
@@ -1879,8 +2004,10 @@ class EvaluateAttack(object):
                         if max_trial_times <= 0 and not succeed_generate:
                             assert False, "Something happens regarding the model.generate function. Check the model file or generation_config.json file"
 
+                        # decode output token ids into text/string
                         batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
+                        # remove prompt part from the output string
                         batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
                         all_outputs.extend(batch_outputs)
 
@@ -1889,14 +2016,18 @@ class EvaluateAttack(object):
                         torch.cuda.empty_cache()
 
                     curr_jb, curr_em = [], []
+                    # after all batches
                     for (gen_str, target) in zip(all_outputs, targets):
+                        # jailbroken if the generated response does not contain any refusal prefixes
                         jailbroken = not any([prefix in gen_str for prefix in self.test_prefixes])
+                        # checks if target answer appears in the generated response
                         em = target in gen_str
                         curr_jb.append(jailbroken)
                         curr_em.append(em)
                 else:
                     print('WARNING: the same control or no tested goals')
 
+                # store the train and test results
                 if mode == 'Train':
                     total_jb.append(curr_jb)
                     total_em.append(curr_em)
@@ -1906,12 +2037,15 @@ class EvaluateAttack(object):
                     test_total_em.append(curr_em)
                     test_total_outputs.append(all_outputs)
 
+                # on default True
                 if verbose:
                     print(f"{mode} Step {step+1}/{len(controls)} | Jailbroken {sum(curr_jb)}/{len(all_outputs)} | EM {sum(curr_em)}/{len(all_outputs)}")
                     print()
 
+            # update prev control
             prev_control = control
 
+        # returns the evaluation results
         return total_jb, total_em, test_total_jb, test_total_em, total_outputs, test_total_outputs
 
 
@@ -1947,23 +2081,31 @@ class ModelWorker(object):
             task = tasks.get()
             if task is None:
                 break
+            # unpack the task
             ob, fn, args, kwargs = task
+            # if function name (fn) is grad
             if fn == "grad":
                 with torch.enable_grad():
+                    # execute the grad() function from AttackPrompt on ob
                     results.put(ob.grad(*args, **kwargs))
             else:
                 with torch.no_grad():
+                    # if fn is logits, test, test_loss
                     if fn == "logits":
+                        # execute the logits() function from AttackPrompt on ob
                         results.put(ob.logits(*args, **kwargs))
                     elif fn == "test":
+                        # execute the test() function from AttackPrompt on ob
                         results.put(ob.test(*args, **kwargs))
                     elif fn == "test_loss":
+                        # execute the test_loss() function from AttackPrompt on ob
                         results.put(ob.test_loss(*args, **kwargs))
                     else:
                         results.put(fn(*args, **kwargs))
             tasks.task_done()
 
     def start(self):
+        # starts a new process and executes ModelWorker.run()
         self.process = mp.Process(
             target=ModelWorker.run,
             args=(self.model, self.tasks, self.results)
@@ -2034,6 +2176,7 @@ def get_workers(params, eval=False):
     # ------------------------------------------------------------------------------------------------ #
     # last, by calling the ModelWorker class, the models will be loaded                                #
     # ------------------------------------------------------------------------------------------------ #
+    # creates one ModelWorker per model_path
     workers = [
         ModelWorker(
             params.model_paths[i],
@@ -2046,12 +2189,16 @@ def get_workers(params, eval=False):
     ]
     if not eval:    # to start the workers
         for worker in workers:
+            # start the worker
             worker.start()
 
     num_train_models = getattr(params, 'num_train_models', len(workers))
     print('Loaded {} train models'.format(num_train_models))
     print('Loaded {} test models'.format(len(workers) - num_train_models))
 
+    # workers refers the the ModelWorker class
+    # returns train and test workers
+    # in DSN case: 1 train worker and 0 test worker
     return workers[:num_train_models], workers[num_train_models:]
 
 def get_goals_and_targets(params):

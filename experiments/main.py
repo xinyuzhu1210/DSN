@@ -26,7 +26,9 @@ def main(_):
     mp.set_start_method('spawn')
 
     params = _CONFIG.value
+    # set random seed
     set_seed(params.random_seed_for_sampling_targets)
+    # dynamically import llm_attacks.dsn (in this case)
     attack_lib = dynamic_import(f'llm_attacks.{params.attack}')
 
     print(params)
@@ -58,6 +60,7 @@ def main(_):
                 log10 = str(int(log10))
             else:
                 log10 = f"{log10:.3}"
+    # use_target_loss_cosine_decay = True in dsn
     elif params.use_target_loss_cosine_decay:
         log10 = "None"
     else:
@@ -94,6 +97,7 @@ def main(_):
     else:
         assert False, "only conducting Multiple experiments..."
 
+    # do ProgressiveMultiPromptAttack.run()
     attack.run(
         n_steps=params.n_steps,
         batch_size=params.batch_size, 

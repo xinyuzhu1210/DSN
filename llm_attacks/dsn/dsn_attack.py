@@ -33,23 +33,31 @@ def apply_cosine_decay(tensor: torch.Tensor) -> torch.Tensor:
     return tensor * decay_weights
 
 def token_gradients_dsn_loss(model, input_ids, input_slice, target_slice, loss_slice, test_prefixes, test_token_length, test_prefixes_toks, alpha, use_decay=False, use_refusal=False):
+    # embedding matrix of [vocab_size, embedding_dim]
     embed_weights = get_embedding_matrix(model)
+    # create one-hot matrix of zeros of shape [20,32000]: [length_control, vocab_size]
     one_hot = torch.zeros(
         input_ids[input_slice].shape[0],
         embed_weights.shape[0],
         device=model.device,
         dtype=embed_weights.dtype
     )
+    # fill one-hot matrix with current tokens and put 1's at the current token positions
     one_hot.scatter_(
         1,
         input_ids[input_slice].unsqueeze(1),
         torch.ones(one_hot.shape[0], 1, device=model.device, dtype=embed_weights.dtype)
     )
+    # enable gradients
     one_hot.requires_grad_()
+    # turn token choices into embedding vectors
+    # trainable embeddings for control tokens
     input_embeds = (one_hot @ embed_weights).unsqueeze(0)
 
-    # now stitch it together with the rest of the embeddings
+    # get embeddings of the full input
     embeds = get_embeddings(model, input_ids.unsqueeze(0)).detach()
+    # now stitch it together with the rest of the embeddings
+    # --> input_embeds replace the original control embeddings with the new trainable ones
     full_embeds = torch.cat(
                         [
                             embeds[:,:input_slice.start,:],
@@ -58,40 +66,60 @@ def token_gradients_dsn_loss(model, input_ids, input_slice, target_slice, loss_s
                         ],
                         dim=1)
 
+    # run model and get the logits
     logits = model(inputs_embeds=full_embeds).logits
     targets = input_ids[target_slice]
 
     affirmative_loss = nn.CrossEntropyLoss(reduction='none')(logits[0,loss_slice,:], targets)
+    # use_target_loss_cosine_decay=True in DSN
+    # so apply cosine decay
     if use_decay:   # cosine decay could only be utlized towards vanilla target loss
         affirmative_loss = apply_cosine_decay(affirmative_loss)
     affirmative_loss = torch.mean(affirmative_loss)
 
-    if not use_refusal:
+    # DSN case: use_refusal is False
+    if not use_refusal: #if no refusal loss
         loss = affirmative_loss
+    # else use refusal loss for 
     else:
         refusal_loss = 0
         count_loss = 0
         crit = UnlikelihoodLoss()
+        # loop over the refusal phrases
         for j_in_algorithm in range(len(test_prefixes)):
+            # get phrase length, e.g. i'm sorry is 2 tokens
             key_word_length = test_token_length[j_in_algorithm]
 
+            # slide over the input --> check every possible position where refusal might appear
             for loss_start in range(loss_slice.start , 99999):
+                # stop when window goes past output length
                 if loss_start + key_word_length > logits.shape[1]:
                     break
+                # select window/slice for the refusal_loss 
                 refusal_loss_slice = slice(loss_start, loss_start+key_word_length)
                 bs = logits.shape[0]
+                # convert target phrase into tensor
                 cross_loss_target = torch.tensor(test_prefixes_toks[j_in_algorithm]).unsqueeze(0).to(logits.device)
+                # repeat for batch
                 cross_loss_target = cross_loss_target.repeat(bs, 1)
 
+                # compute unlikelihoodloss on the refusal loss window; if prob refusal token is high --> high loss
                 temp_loss = crit(logits[:,refusal_loss_slice,:].transpose(1,2), cross_loss_target)
 
+                # sum over all windows
                 refusal_loss += temp_loss.mean()    # the refusal loss won't utilize cosine decay
                 count_loss += 1
 
+        # average refusal loss
         refusal_loss = refusal_loss/count_loss
+        # combine the refusal loss with the affirmative loss
         loss = affirmative_loss + alpha * refusal_loss
 
+    # backpropagate
     loss.backward()
+    # return gradient tensor
+    # --> 20x32000 shape
+    # --> for each position in control tokens, the values show how good/bad a particular token is 
     return one_hot.grad.clone()
 
 class DSNAttackPrompt(AttackPrompt):
@@ -101,12 +129,16 @@ class DSNAttackPrompt(AttackPrompt):
         super().__init__(*args, **kwargs)
 
     def grad(self, model):
+        # use_different_aug_sampling_alpha is set to False in DSN
         if not self.para.use_different_aug_sampling_alpha:
+            # in DSN: augmented_loss_alpha=1.0
             sampling_alpha = self.para.augmented_loss_alpha
         else:
             sampling_alpha = self.para.aug_sampling_alpha2
+        # use_aug_sampling=False in DSN
         use_refusal = True if self.para.use_aug_sampling else False
 
+        # return gradients 
         return token_gradients_dsn_loss(
             model,
             self.input_ids.to(model.device),
@@ -129,12 +161,18 @@ class DSNPromptManager(PromptManager):
 
     def sample_control(self, grad, batch_size, topk=256, temp=1, allow_non_ascii=True):
 
+        # allow_non_ascii=False in DSN
+        # do not allow weird tokens
         if not allow_non_ascii:
             grad[:, self._nonascii_toks.to(grad.device)] = np.infty
+        # get the indices of the top-k tokens based on the gradient (neg gradient is good)
+        # --> so it retrieves best top-k tokens for each position
         top_indices = (-grad).topk(topk, dim=1).indices
         control_toks = self.control_toks.to(grad.device)
+        # copy control tokens batchsize times --> [batchsize, control_token_len]
         original_control_toks = control_toks.repeat(batch_size, 1)
 
+        # for each control token choose which position to modify
         new_token_pos = torch.arange(
             0,
             len(control_toks),
@@ -142,13 +180,17 @@ class DSNPromptManager(PromptManager):
             device=grad.device
         ).type(torch.int64)
 
+        # randomly pick good tokens for the respective positions?
         new_token_val = torch.gather(
             top_indices[new_token_pos], 1,
             torch.randint(0, topk, (batch_size, 1),
             device=grad.device)
         )
+        # return the new control tokens, where at position i, the new token value is inserted
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
+        # return candidate suffixes, where each row is one candidate suffix
+        # a candidate suffix only differs from the original suffix in 1 position
         return new_control_toks
 
 class DSNMultiPromptAttack(MultiPromptAttack):
@@ -170,20 +212,27 @@ class DSNMultiPromptAttack(MultiPromptAttack):
         ):
 
         main_device = self.models[0].device
+        # storage of candidate suffixes
         control_cands = []
 
+        # each worker computes gradients wrt the control tokens
+        # the gradients are computed over all goals and targets (the whole dataset)
+        # refers to the grad function above in DSNAttackPrompt, which calls the token_gradients_dsn_loss func
         for j, worker in enumerate(self.workers):
             worker(self.prompts[j], "grad", worker.model)
 
         # Aggregate gradients
         grad = None
+        # loop over the workers
         for j, worker in enumerate(self.workers):
+            # get gradient tensor and normalize
             new_grad = worker.results.get().to(main_device)
             new_grad = new_grad / new_grad.norm(dim=-1, keepdim=True)
             if grad is None:                    
                 grad = torch.zeros_like(new_grad)
             if grad.shape != new_grad.shape:   
                 with torch.no_grad():
+                    # generate candidate tokens
                     control_cand = self.prompts[j-1].sample_control(grad, batch_size, topk, temp, allow_non_ascii)
                     control_cands.append(self.get_filtered_cands(j-1, control_cand, filter_cand=filter_cand, curr_control=self.control_str))
                 grad = new_grad
@@ -193,10 +242,12 @@ class DSNMultiPromptAttack(MultiPromptAttack):
         # grad is in shape length_control * vocabulary, 
         # e.g. in shape 20*32000
         with torch.no_grad():
+            # generate candidate suffixes; we have batch_size number of candidates
             control_cand = self.prompts[j].sample_control(grad, batch_size, topk, temp, allow_non_ascii)
             del grad, new_grad
             torch.cuda.empty_cache()
 
+            # before appending the candidates, first filter the ones out that are not tokenizer consistent
             control_cands.append(self.get_filtered_cands(j, control_cand, filter_cand=filter_cand, curr_control=self.control_str))
 
         del control_cand ; gc.collect()
@@ -207,15 +258,20 @@ class DSNMultiPromptAttack(MultiPromptAttack):
         refusal_loss = torch.zeros(len(control_cands) * batch_size).to(main_device)     
 
         with torch.no_grad():
+            # for each candidate suffix
             for j, cand in enumerate(control_cands):
 
                 progress = tqdm( range(len(self.prompts[0])), total=len(self.prompts[0]) ) if verbose else enumerate(self.prompts[0])
+                # for each prompt/goal and target
                 for i in progress:
 
+                    # for each worker/model, get the logits for each candidate suffix
                     for k, worker in enumerate(self.workers):
 
+                        # gets logits after running the model on prompt[i]+candidate suffix 
                         worker(self.prompts[k][i], "logits", worker.model, test_controls = cand, return_ids=True)
 
+                    # get model outputs/results for each worker
                     logits, ids = zip(*[worker.results.get() for worker in self.workers])
 
                     torch.cuda.empty_cache()
@@ -223,12 +279,15 @@ class DSNMultiPromptAttack(MultiPromptAttack):
                         print('-'*15 + 'some debug info'+'-'*15)
                         pass
 
+                    # compute target loss (the affirmative loss)
                     temp_gcg_loss = sum([
                         target_weight * self.prompts[k][i].target_loss(logit, id).to(main_device) # may already go through cosine decay
                         for k, (logit, id) in enumerate(zip(logits, ids))
                     ])
+                    # save the loss at the right index for each candidate suffix
                     loss[ j*batch_size : (j+1)*batch_size ] += temp_gcg_loss
 
+                    # in DSN: control_weight = 0
                     if control_weight != 0:     
                         print("computing control weight!")
                         loss[j*batch_size:(j+1)*batch_size] += sum([
@@ -236,26 +295,35 @@ class DSNMultiPromptAttack(MultiPromptAttack):
                             for k, (logit, id) in enumerate(zip(logits, ids))
                         ])
 
+                    # in DSN: use_augmented_loss=True, so it uses refusal loss
                     if not self.para.use_augmented_loss:
                         overall_loss = loss
                     elif self.para.use_augmented_loss:    # DSN loss = affirmative loss + refusal loss
+                        # compute the refusal loss; refers to the dsn_refusal_loss func from AttackPrompt class
                         refusal_loss[ j*batch_size : (j+1)*batch_size ] += sum([
                             target_weight * self.prompts[k][i].dsn_refusal_loss(logit, id).to(main_device)
                             for k, (logit, id) in enumerate(zip(logits, ids))
                         ])
+                        # final loss = affirmative loss + refusal loss
+                        # --> so for every candidate suffix, the loss and refusal loss
+                        # will eventually, after this loop, be computed across/over all prompts/goals
                         overall_loss = loss + refusal_loss
 
                     del logits, ids; gc.collect()
                     torch.cuda.empty_cache()
 
+                    # in DSN verbose = True
                     if verbose:                 
                         progress.set_description(f"loss={loss[j*batch_size:(j+1)*batch_size].min().item()/(i+1):.4f}")
 
+            # find lowest loss; aka find idx of the best suffix with the smallest loss
             min_idx = overall_loss.argmin()
             model_idx = min_idx // batch_size
             batch_idx = min_idx % batch_size
+            # pick best suffix/get the best suffix tokens, and obtain the corresponding lowest loss
             next_control, cand_loss = control_cands[model_idx][batch_idx], overall_loss[min_idx]
 
+            # normalize the loss over the goals and workers
             loss_wrt_whole_ctrl = (overall_loss/len(self.prompts[0])/len(self.workers)).tolist()
 
         # to store two loss term during each step into a pth file
@@ -278,6 +346,7 @@ class DSNMultiPromptAttack(MultiPromptAttack):
             'gcg':store_gcg_loss_history_previous + store_gcg_loss_history,
             'refusal':store_refusal_loss_history_previous + store_refusal_loss_history
             }
+        # logging 
         torch.save(dual_loss_his, loss_his_path+f"{current_step-1}.pth")
         os.rename(loss_his_path+f"{current_step-1}.pth", loss_his_path+f"{current_step}.pth")
 
@@ -300,4 +369,5 @@ class DSNMultiPromptAttack(MultiPromptAttack):
             self.logger.info(next_control)
         del output_temp_str
 
+        # returns best adversarial suffix found in this step, avg loss per goal and model, control candidates of the 1st batch, and all cand losses
         return next_control, cand_loss.item() / len(self.prompts[0]) / len(self.workers), (control_cands[0], loss_wrt_whole_ctrl)
