@@ -191,6 +191,7 @@ class DSNPromptManager(PromptManager):
 
         # return candidate suffixes, where each row is one candidate suffix
         # a candidate suffix only differs from the original suffix in 1 position
+        # e.g one token id at one position is replaced with another in the original suffix
         return new_control_toks
 
 class DSNMultiPromptAttack(MultiPromptAttack):
