@@ -189,6 +189,9 @@ class DSNPromptManager(PromptManager):
             torch.randint(0, topk, (batch_size, 1),
             device=grad.device)
         )
+        print("top indices: ", top_indices)
+        print("topk_nr = ", topk)
+        
         # return the new control candidate tokens, where at position i, the new token value is inserted
         # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
