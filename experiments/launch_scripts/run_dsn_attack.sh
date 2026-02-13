@@ -53,7 +53,7 @@ do
         --config.topk=10 \
         --config.use_different_aug_sampling_alpha=False \
         --config.aug_sampling_alpha2=0.0 \
-        --config.random_seed_for_sampling_targets=44 \
+        --config.random_seed_for_sampling_targets=45 \
         --config.use_target_loss_cosine_decay=True \
         --config.dsn_notes="Some experiment notes, may be stored in the logging file"
 done
