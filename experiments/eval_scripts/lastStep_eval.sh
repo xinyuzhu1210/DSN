@@ -39,13 +39,19 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 # ../results_dsn/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json
+# Qwen2-7B train, batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, doubled prefixes list
+# ../results_dsn/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json
 
 file_list=(
-    '../results_dsn/20260214-00:37:15 1E0/qwen_dsn_25_offset0.json'
-    '../results_dsn/20260214-00:39:58 1E0/qwen_dsn_25_offset0.json'
-    '../results_dsn/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json'
-    '../results_dsn/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json'
-    '../results_dsn/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"

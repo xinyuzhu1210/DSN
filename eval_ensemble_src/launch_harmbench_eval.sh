@@ -71,15 +71,27 @@
 # ../experiments/evalJBBLastStep/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json
+# Qwen2-7B train, batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, doubled prefixes list
+# ../experiments/evalLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json
+# Qwen2-7B train, batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, doubled prefixes list --> JBB True
+# ../experiments/evalJBBLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260214-00:37:15 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260214-00:39:58 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py -1 "$STR" True
+  python harmbench_only_evaluation.py -1 "$STR" False
 done                              # random_seed, logfile, UseJBB
