@@ -59,13 +59,25 @@
 # ../experiments/evalJBBLastStep/20260210-14:50:10 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260210-15:06:41 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260210-15:08:15 1E0/qwen_dsn_25_offset0.json
+# Qwen2-7B batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, topk=10
+# ../experiments/evalLastStep/20260214-00:37:15 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-00:39:58 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json
+# Qwen2-7B batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, topk=10 --> JBB True
+# ../experiments/evalJBBLastStep/20260214-00:37:15 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-00:39:58 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260209-23:12:54 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260210-15:16:19 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260210-14:50:10 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260210-15:06:41 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260210-15:08:15 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-00:37:15 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-00:39:58 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-00:41:13 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-00:42:30 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-00:43:43 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
