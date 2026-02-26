@@ -662,14 +662,14 @@ class AttackPrompt(object):
 
     @torch.no_grad()
     def generate(self, model, gen_config=None):
-        print("gen config 1", gen_config)
+        # print("gen config 1", gen_config)
         # set generation config, if no config is provided
         if gen_config is None:
-            print("test1")
+            # print("test1")
             gen_config = model.generation_config
             gen_config.max_new_tokens = 64
 
-        print("gen config 2", gen_config)
+        # print("gen config 2", gen_config)
 
         # print warning if generation is too long
         if gen_config.max_new_tokens > 64:
@@ -694,9 +694,13 @@ class AttackPrompt(object):
 
     def test(self, model, gen_config=None):
         # returns whether the current suffix jailbreak and whether the target emerge in the LLM's output
+        print("gen config 1", gen_config)
         if gen_config is None:
+            print("test 1")
             gen_config = model.generation_config
             gen_config.max_new_tokens = self.test_new_toks
+
+        print("gen config 2", gen_config)
         # generate the model's response text
         gen_str = self.generate_str(model, gen_config).strip()  # to generate with goal and adv suffix provided
 
