@@ -662,10 +662,14 @@ class AttackPrompt(object):
 
     @torch.no_grad()
     def generate(self, model, gen_config=None):
+        print("gen config", gen_config)
         # set generation config, if no config is provided
         if gen_config is None:
+            print("test1")
             gen_config = model.generation_config
             gen_config.max_new_tokens = 64
+
+        print("gen config", gen_config)
 
         # print warning if generation is too long
         if gen_config.max_new_tokens > 64:
