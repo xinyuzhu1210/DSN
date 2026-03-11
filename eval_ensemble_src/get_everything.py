@@ -21,6 +21,8 @@ def get_goals_and_targets(n_train_data = 25, n_test_data = 100, sampling_seed = 
     else:
         adv_bench_file_path = "../data/AdvBench_harmful_behaviors.csv"
     train_data = pd.read_csv(adv_bench_file_path)
+
+    print('seed=', sampling_seed)
     
     if not sampling_seed == -1:
         # in the random sampling mode, theres no need for the offset var, thus del it
