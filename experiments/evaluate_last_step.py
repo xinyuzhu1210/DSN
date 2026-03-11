@@ -106,9 +106,9 @@ def main(_):
     assert len(controls) > 0
     controls = controls[-1:]    # to evaluated only the last step suffix within the log file
 
-    # if os.path.exists(params.logfile):
-    #     print("Already run...")
-    #     return None
+    if os.path.exists(params.logfile):
+        print("Already run...")
+        return None
     
     print('logfile=', params.logfile)
 
