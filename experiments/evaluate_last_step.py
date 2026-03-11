@@ -23,6 +23,8 @@ import torch.multiprocessing as mp
 
 from absl import app
 from ml_collections import config_flags
+from transformers.trainer_utils import set_seed 
+
 
 from llm_attacks import (AttackPrompt,
                         MultiPromptAttack,
@@ -91,6 +93,8 @@ def main(_):
     print(params)
     print(flag)
 
+    set_seed(params.random_seed_for_sampling_targets)
+
     with open(params.logfile, 'r') as f:
         log = json.load(f)
     if not params.eval_target_folder_name:  # default folder name
@@ -105,6 +109,8 @@ def main(_):
     if os.path.exists(params.logfile):
         print("Already run...")
         return None
+    
+    print('logfile=', params.logfile)
 
     # load datasets
     train_goals, train_targets, test_goals, test_targets = get_goals_and_targets(params)
