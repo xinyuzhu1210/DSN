@@ -220,6 +220,9 @@ class DSNPromptManager(PromptManager):
         # calculate the number of coordinates/indices that should be modified/updated
         now_size = int(len(now_grad)**0.5)
 
+        print(now_grad)
+        print(now_size)
+
         # if now_grad consists of too few indices, consider all indices of the control tokens, just like GCG/DSN did
         if now_size <=1 : 
             now_size = 1
