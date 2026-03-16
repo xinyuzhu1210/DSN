@@ -35,6 +35,7 @@
 # ../experiments/evalJBBLastStep/20260203-20:07:35 1E0/llama3_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260203-20:09:50 1E0/llama3_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260203-20:11:07 1E0/llama3_dsn_25_offset0.json
+
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
 # ../experiments/evalLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json
@@ -47,6 +48,7 @@
 # ../experiments/evalJBBLastStep/20260209-19:56:48 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260209-19:58:46 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json
+
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = true
 # ../experiments/evalLastStep/20260209-23:12:54 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260210-15:16:19 1E0/qwen_dsn_25_offset0.json
@@ -103,10 +105,9 @@
 # ../experiments/evalJBBLastStep/20260206-17:14:48 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json'
-  '../experiments/evalJBBLastStep/20260206-17:14:48 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 41 "$STR" True
+  python harmbench_only_evaluation.py 42 "$STR" False
 done                              # random_seed, logfile, UseJBB
