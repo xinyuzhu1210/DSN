@@ -58,9 +58,9 @@ def main():
 
     set_seed(random_seed)
 
-    if os.path.exists(os.path.join(os.path.dirname(log_file_path), "results_HarmBench.json")):
-        print("Already run...")
-        return None
+    # if os.path.exists(os.path.join(os.path.dirname(log_file_path), "results_HarmBench.json")):
+    #     print("Already run...")
+    #     return None
 
     print(f"The log_file_path is {log_file_path}")
     start = time.time()    
