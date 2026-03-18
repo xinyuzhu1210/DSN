@@ -1944,8 +1944,8 @@ class EvaluateAttack(object):
         tokenizer.padding_side = 'left'
 
         # test
-        pipe = transformers.pipeline('text-classification', model='chameleon-lizard/xlmr-base-refusal-classifier', device=0)
-        # pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier', device=0)
+        pipe = transformers.pipeline('text-classification', model='chameleon-lizard/xlmr-base-refusal-classifier', device=0, max_length=512, truncation=True)
+        # pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier', device=0, max_length=512, truncation=True)
 
 
         total_jb, total_em, total_outputs = [],[],[]
