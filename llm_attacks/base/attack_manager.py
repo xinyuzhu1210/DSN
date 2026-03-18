@@ -1940,8 +1940,8 @@ class EvaluateAttack(object):
     @torch.no_grad()
     def run(self, steps, controls, batch_size, max_new_len=60, verbose=True):
         # test
-        pipe = transformers.pipeline('text-classification', model='chameleon-lizard/xlmr-base-refusal-classifier')
-        pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier')
+        pipe = transformers.pipeline('text-classification', model='chameleon-lizard/xlmr-base-refusal-classifier', device=0)
+        pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier', device=0)
 
         # get model and tokenizer
         model, tokenizer = self.workers[0].model, self.workers[0].tokenizer
