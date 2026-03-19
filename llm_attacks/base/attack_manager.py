@@ -1945,7 +1945,8 @@ class EvaluateAttack(object):
 
         # test
         # pipe = transformers.pipeline('text-classification', model='chameleon-lizard/xlmr-base-refusal-classifier', device=0, max_length=512, truncation=True)
-        pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier', device=0, max_length=512, truncation=True)
+        tokenizer_pipe_1 = AutoTokenizer.from_pretrained('Human-CentricAI/LLM-Refusal-Classifier', use_fast=False)
+        pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier', tokenizer=tokenizer_pipe_1, device=0, max_length=512, truncation=True)
 
 
         total_jb, total_em, total_outputs = [],[],[]
