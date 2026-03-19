@@ -1977,6 +1977,7 @@ class EvaluateAttack(object):
                     # get all targets
                     targets = [p.target for p in attack.prompts[0]._prompts]
                     all_outputs = []
+                    gen_inputs = []
                     if len(all_inputs) // batch_size == len(all_inputs) / batch_size:
                         temp_length = len(all_inputs) // batch_size
                     else:
@@ -2020,7 +2021,11 @@ class EvaluateAttack(object):
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         # remove prompt part from the output string
                         batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
+                        removed_inputs = [output[:gen_start_idx[i]] for i, output in enumerate(batch_outputs)]
                         all_outputs.extend(batch_outputs)
+                        gen_inputs.extend(removed_inputs)
+                        print(len(all_outputs))
+                        print(len(gen_inputs))
 
                         # clear cache
                         del batch_inputs, batch_input_ids, batch_attention_mask, outputs, batch_outputs
@@ -2028,9 +2033,10 @@ class EvaluateAttack(object):
 
                     curr_jb, curr_em = [], []
                     # after all batches
-                    for (gen_str, target) in zip(all_outputs, targets):
+                    for (gen_str, target, input_str) in zip(all_outputs, targets, gen_inputs):
                         # jailbroken if the generated response does not contain any refusal prefixes
                         print("generated string:", gen_str)
+                        print("input string:", input_str)
                         # print("classifier 1", pipe(gen_str))
                         print("classifier 2", pipe_1(gen_str))
                         output_class = pipe_1(gen_str)
