@@ -159,105 +159,105 @@ class DSNPromptManager(PromptManager):
 
         super().__init__(*args, **kwargs)
 
-    # def sample_control(self, grad, batch_size, topk=256, temp=1, allow_non_ascii=True):
-
-    #     # allow_non_ascii=False in DSN
-    #     # do not allow weird tokens
-    #     if not allow_non_ascii:
-    #         grad[:, self._nonascii_toks.to(grad.device)] = np.infty
-    #     # get the indices of the top-k tokens based on the gradient (neg gradient is good)
-    #     # --> so it retrieves best top-k tokens for each position
-    #     top_indices = (-grad).topk(topk, dim=1).indices
-    #     control_toks = self.control_toks.to(grad.device)
-    #     # copy control tokens batchsize times --> [batchsize, control_token_len]
-    #     original_control_toks = control_toks.repeat(batch_size, 1)
-
-    #     # for each candidate suffix, decide which position to modify
-    #     # new_token_pos has a batchsize number of entries
-    #     # each entry signifies the position in the suffix that ought to be modified
-    #     new_token_pos = torch.arange(
-    #         0,
-    #         len(control_toks),
-    #         len(control_toks) / batch_size,
-    #         device=grad.device
-    #     ).type(torch.int64)
-
-    #     # for each row/candidate suffix, randomly pick one index inside the top-k list
-    #     # that serves as a replacement token
-    #     new_token_val = torch.gather(
-    #         top_indices[new_token_pos], 1,
-    #         torch.randint(0, topk, (batch_size, 1),
-    #         device=grad.device)
-    #     )
-    #     # print("top indices: ", top_indices)
-    #     # print("topk_nr = ", topk)
-
-    #     # return the new control candidate tokens, where at position i, the new token value is inserted
-    #     # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
-    #     new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
-
-    #     # return candidate suffixes, where each row is one candidate suffix
-    #     # a candidate suffix only differs from the original suffix in 1 position
-    #     # e.g one token id at one position is replaced with another in the original suffix
-    #     return new_control_toks
-    
-
     def sample_control(self, grad, batch_size, topk=256, temp=1, allow_non_ascii=True):
-        '''sample_control function obtained from MAGIC, which is proposed by Li et al. (2024)'''
 
+        # allow_non_ascii=False in DSN
+        # do not allow weird tokens
         if not allow_non_ascii:
             grad[:, self._nonascii_toks.to(grad.device)] = np.infty
-
-        # positions in the control suffix that should be modified
-        now_grad = []
-        # loop through all the control tokens
-        for idx in range(len(self.control_toks)):
-            # obtain the gradient of the current control token
-            temp = grad[idx][self.control_toks[idx]]
-            # only obtain indices of the control suffix that have a positive token gradient 
-            if temp>0: now_grad.append(idx)
-
-        # calculate the number of coordinates/indices that should be modified/updated
-        now_size = int(len(now_grad)**0.5)
-
-        # print(now_grad)
-        # print(now_size)
-
-        # if now_grad consists of too few indices, consider all indices of the control tokens, just like GCG/DSN did
-        if now_size <=1 : 
-            now_size = 1
-            now_grad = [_ for _ in range(len(self.control_toks))]
-
-        # get the top-k best tokens per control suffix position/index
-        top_gradient, top_indices = (-grad).topk(topk, dim=1)
+        # get the indices of the top-k tokens based on the gradient (neg gradient is good)
+        # --> so it retrieves best top-k tokens for each position
+        top_indices = (-grad).topk(topk, dim=1).indices
         control_toks = self.control_toks.to(grad.device)
-        # copy control tokens batchsize times
+        # copy control tokens batchsize times --> [batchsize, control_token_len]
         original_control_toks = control_toks.repeat(batch_size, 1)
 
-        # for each candidate suffix, randomly sample the indices from now_grad
-        # how many indices are sampled is determined by now_size
-        new_token_pos = torch.tensor(
-            [np.random.choice(np.array(now_grad), size=now_size) for _ in range(batch_size)],
-            device=grad.device,
-            dtype=torch.int64
-        )
+        # for each candidate suffix, decide which position to modify
+        # new_token_pos has a batchsize number of entries
+        # each entry signifies the position in the suffix that ought to be modified
+        new_token_pos = torch.arange(
+            0,
+            len(control_toks),
+            len(control_toks) / batch_size,
+            device=grad.device
+        ).type(torch.int64)
 
-        # for each row/candidate suffix, and for each position that ought to be modified
-        # randomly pick a token from the top-k list for that position
+        # for each row/candidate suffix, randomly pick one index inside the top-k list
+        # that serves as a replacement token
         new_token_val = torch.gather(
-            top_indices[new_token_pos], 2, 
-            torch.randint(0, topk, (batch_size, new_token_pos.size(1), 1),
+            top_indices[new_token_pos], 1,
+            torch.randint(0, topk, (batch_size, 1),
             device=grad.device)
         )
+        # print("top indices: ", top_indices)
+        # print("topk_nr = ", topk)
 
-        # return the new control candidate tokens, where at position i, the new token value from the top-k list is inserted
+        # return the new control candidate tokens, where at position i, the new token value is inserted
         # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
-        # each candidate suffix might modify multiple tokens in the control suffix
-        new_token_val = new_token_val.squeeze(-1)
-        new_control_toks = original_control_toks.scatter_(1, new_token_pos, new_token_val)
+        new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
-        # print(new_control_toks.shape)
+        # return candidate suffixes, where each row is one candidate suffix
+        # a candidate suffix only differs from the original suffix in 1 position
+        # e.g one token id at one position is replaced with another in the original suffix
         return new_control_toks
+    
+
+    # def sample_control(self, grad, batch_size, topk=256, temp=1, allow_non_ascii=True):
+    #     '''sample_control function obtained from MAGIC, which is proposed by Li et al. (2024)'''
+
+    #     if not allow_non_ascii:
+    #         grad[:, self._nonascii_toks.to(grad.device)] = np.infty
+
+    #     # positions in the control suffix that should be modified
+    #     now_grad = []
+    #     # loop through all the control tokens
+    #     for idx in range(len(self.control_toks)):
+    #         # obtain the gradient of the current control token
+    #         temp = grad[idx][self.control_toks[idx]]
+    #         # only obtain indices of the control suffix that have a positive token gradient 
+    #         if temp>0: now_grad.append(idx)
+
+    #     # calculate the number of coordinates/indices that should be modified/updated
+    #     now_size = int(len(now_grad)**0.5)
+
+    #     # print(now_grad)
+    #     # print(now_size)
+
+    #     # if now_grad consists of too few indices, consider all indices of the control tokens, just like GCG/DSN did
+    #     if now_size <=1 : 
+    #         now_size = 1
+    #         now_grad = [_ for _ in range(len(self.control_toks))]
+
+    #     # get the top-k best tokens per control suffix position/index
+    #     top_gradient, top_indices = (-grad).topk(topk, dim=1)
+    #     control_toks = self.control_toks.to(grad.device)
+    #     # copy control tokens batchsize times
+    #     original_control_toks = control_toks.repeat(batch_size, 1)
+
+    #     # for each candidate suffix, randomly sample the indices from now_grad
+    #     # how many indices are sampled is determined by now_size
+    #     new_token_pos = torch.tensor(
+    #         [np.random.choice(np.array(now_grad), size=now_size) for _ in range(batch_size)],
+    #         device=grad.device,
+    #         dtype=torch.int64
+    #     )
+
+    #     # for each row/candidate suffix, and for each position that ought to be modified
+    #     # randomly pick a token from the top-k list for that position
+    #     new_token_val = torch.gather(
+    #         top_indices[new_token_pos], 2, 
+    #         torch.randint(0, topk, (batch_size, new_token_pos.size(1), 1),
+    #         device=grad.device)
+    #     )
+
+    #     # return the new control candidate tokens, where at position i, the new token value from the top-k list is inserted
+    #     # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
+    #     # each candidate suffix might modify multiple tokens in the control suffix
+    #     new_token_val = new_token_val.squeeze(-1)
+    #     new_control_toks = original_control_toks.scatter_(1, new_token_pos, new_token_val)
+
+    #     # print(new_control_toks.shape)
+    #     return new_control_toks
     
 
 class DSNMultiPromptAttack(MultiPromptAttack):
