@@ -145,7 +145,7 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
             output_ids = cls.generate(
                 **encoded.to(cls.device),
                 do_sample=False,
-                max_new_tokens=5,
+                max_new_tokens=10,
             )
             # remove the prompt ids from the output ids, as both the prompt and answer are returned
             output_ids = output_ids[:, encoded.input_ids.shape[1]:]
