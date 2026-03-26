@@ -150,8 +150,8 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
             # remove the prompt ids from the output ids, as both the prompt and answer are returned
             output_ids = output_ids[:, encoded.input_ids.shape[1]:]
         # decode output into text
-        completion = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip().lower()
-        print(completion)
+        completion = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
+        print('test', completion)
         # interpret results
         if "yes" in completion:
             return True
