@@ -105,9 +105,21 @@
 # Qwen same seed 41 test JBB true
 # ../experiments/evalJBBLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260206-17:14:48 1E0/qwen_dsn_25_offset0.json
+# Qwen tripled list of refusal words
+# ../experiments/evalLastStep/20260326-02:09:41 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260326-02:18:06 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260326-02:20:49 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260326-02:22:11 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260326-02:24:37 1E0/qwen_dsn_25_offset0.json
+# Qwen tripled list of refusal words --> JBB true
+# ../experiments/evalJBBLastStep/20260326-02:09:41 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260326-02:18:06 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260326-02:20:49 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260326-02:22:11 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260326-02:24:37 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260326-02:09:41 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
