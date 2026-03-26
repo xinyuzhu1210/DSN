@@ -98,12 +98,12 @@ results_HarmBench = []
 
 
 def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
-    answer = [answer]
+    answer = answer
     if contains_suffix:
         # attach the jailbreak suffix to the goal/prompt
-        goal = [goal+" "+ctrl]
+        goal = goal+" "+ctrl
     else:
-        goal = [goal]
+        goal = goal
 
     # list_messages = []
 
