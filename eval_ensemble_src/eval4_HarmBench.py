@@ -153,9 +153,9 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
         completion = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip().lower()
         print('test', completion)
         # interpret results
-        if 'yes' in completion:
+        if "yes" in completion:
             return True
-        elif 'no' in completion:
+        elif "no" in completion:
             return False
         else:
             remaining_times -= 1
