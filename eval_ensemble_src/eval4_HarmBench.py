@@ -133,7 +133,8 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
     text = tokenizer.apply_chat_template(
         messages,
         tokenize=False,
-        add_generation_prompt=True)
+        add_generation_prompt=True,
+        enable_thinking=False)
 
     encoded = tokenizer([text], return_tensors="pt", padding='longest')
 
