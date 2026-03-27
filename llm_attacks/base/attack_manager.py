@@ -845,8 +845,8 @@ class AttackPrompt(object):
                 return loss.squeeze()
         crit = UnlikelihoodLoss()
 
-        print("refusal prefixes:", self.test_prefixes)
-        print("length=", len(self.test_prefixes))
+        # print("refusal prefixes:", self.test_prefixes)
+        # print("length=", len(self.test_prefixes))
         # loop over each refusal prefix/phrase
         for j_in_algorithm in range(len(self.test_prefixes)):
             key_word_length = self.test_token_length[j_in_algorithm]
