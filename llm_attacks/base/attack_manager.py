@@ -843,10 +843,12 @@ class AttackPrompt(object):
                 # input logits has shape [batch_size, seq_len, vocab], where seq_len is based on the input query length
                 # convert input logits to probabilitites --> so each position in seq_len has a prob for every word in the vocab
                 probabilities = F.softmax(input, dim=1)
+                print("probabilities", probabilities)
                 # search up the refusal tokens probabilities in the vocabulary of each position
                 # i.e. search up the prob of token 1 (for example token 'I') in the vocab of position 2 
                 # --> so it gets the prob of each token in the refusal phrase at each position
                 p = probabilities.gather(1, target.unsqueeze(1))
+                print("p", p)
                 p = torch.clamp(p, min=0, max=1-self.eps)
                 # compute the unlikelihood loss -log(1-p) 
                 loss = -torch.log(1 - p)
@@ -868,8 +870,9 @@ class AttackPrompt(object):
             step_count = 0
             print(self.test_prefixes_toks[j_in_algorithm])
 
-            # slide over the output positions
+            # slide over the output positions/sequence length (logits.shape[1])
             for loss_start in range(self._target_slice.start-1 , 99999):
+                # break when sequence length logits.shape[1] is covered
                 if loss_start + key_word_length > logits.shape[1]:
                     break
                 else:
