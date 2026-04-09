@@ -901,11 +901,11 @@ class AttackPrompt(object):
 
         # average the loss over all sliding windows
         # loss = loss/count_loss
+        print("all losses", all_losses)
         stacked_tensor = torch.stack(all_losses, dim=0)
         topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
         loss = torch.mean(topk_values, dim=0)
         print("stacked tensor shape", stacked_tensor.shape)
-        print("stacked tensor", stacked_tensor)
         print("values", topk_values.shape)
         print("loss", loss)
         print("loss shape", loss.shape)
