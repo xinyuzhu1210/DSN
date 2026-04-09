@@ -837,27 +837,31 @@ class AttackPrompt(object):
                 self.eps = 0.01
 
             def forward(self, input, target):
-                print("input shape", input.shape)
-                print("target shape", target.shape)
-                print("unsqueeze", target.unsqueeze(1).shape)
-                # input logits has shape [batch_size, seq_len, vocab], where seq_len is based on the input query length
+                # print("input shape", input.shape)
+                # print("target shape", target.shape)
+                # print("unsqueeze", target.unsqueeze(1).shape)
+
+                # input logits has shape [batch_size, vocab, seq_len_refusal_phrase], where seq_len is based on the length of the refusal phrase
                 # convert input logits to probabilitites --> so each position in seq_len has a prob for every word in the vocab
-                probabilities = F.softmax(input, dim=-1)
+                probabilities = F.softmax(input, dim=1)
                 # search up the refusal tokens probabilities in the vocabulary of each position
                 # i.e. search up the prob of token 1 (for example token 'I') in the vocab of position 2 
                 # --> so it gets the prob of each token in the refusal phrase at each position
-                p = probabilities.gather(-1, target.unsqueeze(-1))
+                p = probabilities.gather(1, target.unsqueeze(1))
                 p = torch.clamp(p, min=0, max=1-self.eps)
                 # compute the unlikelihood loss -log(1-p) 
                 loss = -torch.log(1 - p)
                 loss = torch.clamp(loss, min=0, max=10)
                 # a high loss means that the model is likely to produce a refusal phrase a that specific window
-                return loss.squeeze(-1)
+                return loss.squeeze()
         crit = UnlikelihoodLoss()
 
         # print("refusal prefixes:", self.test_prefixes)
         # print("length=", len(self.test_prefixes))
-        print("logits shape", logits.shape)
+        # print("logits shape", logits.shape)
+
+        all_losses = []
+        
         # loop over each refusal prefix/phrase
         for j_in_algorithm in range(len(self.test_prefixes)):
             # get refusal phrase length
@@ -866,9 +870,10 @@ class AttackPrompt(object):
                 pass
 
             step_count = 0
-            print(self.test_prefixes_toks[j_in_algorithm])
+            # print(self.test_prefixes_toks[j_in_algorithm])
 
             # slide over the output positions/sequence length (logits.shape[1])
+            # input logits has shape [batch_size, seq_len, vocab], where seq_len is based on the input query length
             for loss_start in range(self._target_slice.start-1 , 99999):
                 # break when sequence length logits.shape[1] is covered
                 if loss_start + key_word_length > logits.shape[1]:
@@ -886,17 +891,20 @@ class AttackPrompt(object):
                 cross_loss_target = cross_loss_target.repeat(bs, 1)
 
                 # compute unlikelihood loss, which gives a high loss if the model assigns a high prob to the refusal tokens
-                # temp_loss = crit(logits[:,refusal_loss_slice,:].transpose(1,2), cross_loss_target)
-                temp_loss = crit(logits[:,refusal_loss_slice,:], cross_loss_target)
-
+                temp_loss = crit(logits[:,refusal_loss_slice,:].transpose(1,2), cross_loss_target)
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
                 loss += temp_loss.mean(-1)
                 count_loss += 1
+                all_losses.append(temp_loss.mean(-1))
 
         # average the loss over all sliding windows
         loss = loss/count_loss
+        print("loss", loss)
+        print("count loss", count_loss)
+        print("all losses", all_losses)
+        print("length all losses", len(all_losses))
         return loss * self.para.augmented_loss_alpha
 
     def control_loss(self, logits, ids):
