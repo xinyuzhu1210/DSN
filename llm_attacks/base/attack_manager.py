@@ -878,7 +878,7 @@ class AttackPrompt(object):
             for loss_start in range(self._target_slice.start-1 , 99999):
                 # break when sequence length logits.shape[1] is covered
                 if loss_start + key_word_length > logits.shape[1]:
-                    print{'hi'}
+                    print('hi')
                     break
                 else:
                     step_count += 1
