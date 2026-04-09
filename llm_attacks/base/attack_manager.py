@@ -901,10 +901,10 @@ class AttackPrompt(object):
 
         # average the loss over all sliding windows
         loss = loss/count_loss
-        print("loss", loss)
-        print("count loss", count_loss)
-        print("all losses", all_losses)
-        print("length all losses", len(all_losses))
+        # print("loss", loss)
+        # print("count loss", count_loss)
+        # print("all losses", all_losses)
+        # print("length all losses", len(all_losses))
         return loss * self.para.augmented_loss_alpha
 
     def control_loss(self, logits, ids):

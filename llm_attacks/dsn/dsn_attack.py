@@ -375,6 +375,7 @@ class DSNMultiPromptAttack(MultiPromptAttack):
                         # --> so for every candidate suffix, the loss and refusal loss
                         # will eventually, after this loop, be computed across/over all prompts/goals
                         overall_loss = loss + refusal_loss
+                        print('refusal loss shape', refusal_loss.shape)
 
                     del logits, ids; gc.collect()
                     torch.cuda.empty_cache()
@@ -384,6 +385,9 @@ class DSNMultiPromptAttack(MultiPromptAttack):
                         progress.set_description(f"loss={loss[j*batch_size:(j+1)*batch_size].min().item()/(i+1):.4f}")
 
             # find lowest loss; aka find idx of the best suffix with the smallest loss
+            print('overall loss shape', overall_loss.shape)
+            print('overall loss', overall_loss)
+            print('loss shape', loss.shape)
             min_idx = overall_loss.argmin()
             model_idx = min_idx // batch_size
             batch_idx = min_idx % batch_size
