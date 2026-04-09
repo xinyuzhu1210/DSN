@@ -854,7 +854,7 @@ class AttackPrompt(object):
                 loss = torch.clamp(loss, min=0, max=10)
                 print('loss shape', loss.shape)
                 # a high loss means that the model is likely to produce a refusal phrase a that specific window
-                return loss.squeeze()
+                return loss.squeeze(1)
         crit = UnlikelihoodLoss()
 
         # print("refusal prefixes:", self.test_prefixes)
