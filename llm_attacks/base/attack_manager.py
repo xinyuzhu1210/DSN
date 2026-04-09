@@ -852,6 +852,7 @@ class AttackPrompt(object):
                 # compute the unlikelihood loss -log(1-p) 
                 loss = -torch.log(1 - p)
                 loss = torch.clamp(loss, min=0, max=10)
+                print('loss shape', loss.shape)
                 # a high loss means that the model is likely to produce a refusal phrase a that specific window
                 return loss.squeeze()
         crit = UnlikelihoodLoss()
@@ -877,6 +878,7 @@ class AttackPrompt(object):
             for loss_start in range(self._target_slice.start-1 , 99999):
                 # break when sequence length logits.shape[1] is covered
                 if loss_start + key_word_length > logits.shape[1]:
+                    print{'hi'}
                     break
                 else:
                     step_count += 1
@@ -892,6 +894,7 @@ class AttackPrompt(object):
 
                 # compute unlikelihood loss, which gives a high loss if the model assigns a high prob to the refusal tokens
                 temp_loss = crit(logits[:,refusal_loss_slice,:].transpose(1,2), cross_loss_target)
+                print('temp_loss shape', temp_loss.shape)
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
