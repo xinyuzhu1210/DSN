@@ -895,13 +895,19 @@ class AttackPrompt(object):
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
-                loss += temp_loss.mean(-1)
-                count_loss += 1
+                # loss += temp_loss.mean(-1)
+                # count_loss += 1
                 all_losses.append(temp_loss.mean(-1))
 
         # average the loss over all sliding windows
-        loss = loss/count_loss
-        # print("loss", loss)
+        # loss = loss/count_loss
+        stacked_tensor = torch.stack(all_losses, dim=0)
+        topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
+        loss = torch.mean(topk_values, dim=0)
+        print("stacked tensor shape", stacked_tensor.shape)
+        print("values", topk_values.shape)
+        print("loss", loss)
+        print("loss shape", loss.shape)
         # print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
