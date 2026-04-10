@@ -99,8 +99,8 @@ def main():
 
     # logging and save the results
     parent_folder = os.path.dirname(log_file_path)
-    # new_eval_file_path = os.path.join(parent_folder, "results_HarmBench.json")
-    new_eval_file_path = os.path.join(parent_folder, "results_qwen3.5.json")
+    new_eval_file_path = os.path.join(parent_folder, "results_HarmBench.json")
+    # new_eval_file_path = os.path.join(parent_folder, "results_qwen3.5.json")
 
     with open(new_eval_file_path, 'w', encoding='utf-8') as json_file:
         current_time = time.strftime("%Y%m%d-%H:%M:%S")
@@ -116,8 +116,8 @@ def main():
             json_file, ensure_ascii=False, indent=4)
         print(f"{new_eval_file_path} has been saved, time taken is {time.time() - start} seconds, now is {current_time}")
 
-    # print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
-    print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Qwen3.5 score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
+    print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
+    # print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Qwen3.5 score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
     print('Harmbench evaluation is done!')
 
 if __name__ == '__main__':
