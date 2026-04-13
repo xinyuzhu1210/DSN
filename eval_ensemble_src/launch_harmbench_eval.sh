@@ -117,9 +117,13 @@
 # ../experiments/evalJBBLastStep/20260326-02:20:49 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260326-02:22:11 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260326-02:24:37 1E0/qwen_dsn_25_offset0.json
+# Qwen tripled list seed 42 top-k average
+# ../experiments/evalLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json
+# Qwen tripled list seed 42 top-k average --> JBB true
+# ../experiments/evalJBBLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalLastStep/20260326-02:18:06 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
