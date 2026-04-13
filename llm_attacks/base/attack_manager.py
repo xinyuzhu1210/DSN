@@ -906,12 +906,18 @@ class AttackPrompt(object):
         # loss = loss/count_loss
         # print("all losses", all_losses)
         stacked_tensor = torch.stack(all_losses, dim=0)
-        topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
-        loss = torch.mean(topk_values, dim=0)
-        # print("stacked tensor shape", stacked_tensor.shape)
+
+        # topk averaging
+        # topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
+        # loss = torch.mean(topk_values, dim=0)
+
+        # taking the max value across all windows for each candidate suffix
+        loss, _ = torch.max(stacked_tensor, dim=0)
+
+        print("stacked tensor shape", stacked_tensor.shape)
         # print("values", topk_values.shape)
-        # print("loss", loss)
-        # print("loss shape", loss.shape)
+        print("loss", loss)
+        print("loss shape", loss.shape)
         # print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
