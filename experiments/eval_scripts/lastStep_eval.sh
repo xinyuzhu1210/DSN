@@ -61,9 +61,11 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 # ../results_dsn/20260326-02:20:49 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260326-02:22:11 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260326-02:24:37 1E0/qwen_dsn_25_offset0.json
+# Qwen tripled list seed 42 top-k average
+# ../results_dsn/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json
 
 file_list=(
-    '../results_dsn/20260326-02:18:06 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
