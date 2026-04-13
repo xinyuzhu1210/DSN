@@ -914,10 +914,10 @@ class AttackPrompt(object):
         # taking the max value across all windows for each candidate suffix
         loss, _ = torch.max(stacked_tensor, dim=0)
 
-        print("stacked tensor shape", stacked_tensor.shape)
+        # print("stacked tensor shape", stacked_tensor.shape)
         # print("values", topk_values.shape)
-        print("loss", loss)
-        print("loss shape", loss.shape)
+        # print("loss", loss)
+        # print("loss shape", loss.shape)
         # print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
