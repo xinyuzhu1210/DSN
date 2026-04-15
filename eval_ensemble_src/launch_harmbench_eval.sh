@@ -122,10 +122,15 @@
 # Qwen tripled list seed 42 top-k average --> JBB true
 # ../experiments/evalJBBLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json
 
+# Qwen tripled list seed 42 max() operation
+# ../experiments/evalLastStep/20260414-00:58:27 1E0/qwen_dsn_25_offset0.json
+# Qwen tripled list seed 42 max() operation --> JBB true
+# ../experiments/evalJBBLastStep/20260414-00:58:27 1E0/qwen_dsn_25_offset0.json
+
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260414-00:58:27 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 42 "$STR" True
+  python harmbench_only_evaluation.py 42 "$STR" False
 done                              # random_seed, logfile, UseJBB
