@@ -19,7 +19,7 @@ from transformers.trainer_utils import set_seed
 os.sys.path.append("..")
 
 from eval_ensemble_src.get_everything import get_goals_and_targets
-from eval_ensemble_src.eval4_HarmBench import get_HarmBench_results
+from eval_ensemble_src.eval4_HarmBench import get_HarmBench_results, get_Gemma4_results
 
 def get_model_name(log_file_path):
     if "vicuna13bv15" in log_file_path:
@@ -83,25 +83,28 @@ def main():
     # duplicate the tested (last) suffix for all test goals
     all_ctrl = [log["Tested suffix"][-1]]*len(test_goals)
 
-    # evaluate with HarmBench
+    # evaluate with HarmBench and Gemma
     results_HarmBench = []
+    results_Gemma4 = []
     for i, (goal, answer, ctrl) in tqdm(enumerate(zip(test_goals, test_outputs, all_ctrl)), total=len(test_goals)):
         # use the harmbench classifier on the test goals, outputs and adversarial control tokens
         # it will return True or False
         results_HarmBench.append(get_HarmBench_results(goal, answer, ctrl, contains_suffix=True))
+        results_Gemma4.append(get_Gemma4_results(goal, answer, ctrl, contains_suffix=True))
     torch.cuda.empty_cache()
-    print("the HarmBench evaluator is done")
+    print("the HarmBench and Gemma4 evaluator are done")
 
     # list of refusal matching results (consisting of True and False)
     RM = test_jb_KWM
     # list of harmbench results (consisting of True and False)
     HB = results_HarmBench
+    GM = results_Gemma4
 
     # logging and save the results
     parent_folder = os.path.dirname(log_file_path)
-    # new_eval_file_path = os.path.join(parent_folder, "results_HarmBench.json")
+    new_eval_file_path = os.path.join(parent_folder, "results_HarmBench.json")
     # new_eval_file_path = os.path.join(parent_folder, "results_qwen3.5.json")
-    new_eval_file_path = os.path.join(parent_folder, "results_gemma4.json")
+    new_eval_file_path_gemma = os.path.join(parent_folder, "results_gemma4.json")
 
     with open(new_eval_file_path, 'w', encoding='utf-8') as json_file:
         current_time = time.strftime("%Y%m%d-%H:%M:%S")
@@ -117,11 +120,25 @@ def main():
             json_file, ensure_ascii=False, indent=4)
         print(f"{new_eval_file_path} has been saved, time taken is {time.time() - start} seconds, now is {current_time}")
 
+    with open(new_eval_file_path_gemma, 'w', encoding='utf-8') as json_file:
+        current_time = time.strftime("%Y%m%d-%H:%M:%S")
+        json.dump(
+            {
+                "Refusal_KWM_ASR":test_jb_ASR,
+                "results_refusal":RM,
+                "results_HB":results_Gemma4,
+                "test_goals":test_goals,
+                "test_outputs":test_outputs,
+                "eval_time":current_time
+            },
+            json_file, ensure_ascii=False, indent=4)
+        print(f"{new_eval_file_path_gemma} has been saved, time taken is {time.time() - start} seconds, now is {current_time}")
+
     # print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
     # print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Qwen3.5 score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
-    print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Gemma4-26B A4B score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
+    print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)} | Gemma4-26B A4B score: {sum(results_Gemma4)} / {len(results_Gemma4)}")
     
-    print('Harmbench evaluation is done!')
+    print('Harmbench and Gemma evaluation is done!')
 
 if __name__ == '__main__':
     main()
