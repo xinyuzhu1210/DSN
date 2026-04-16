@@ -221,10 +221,11 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
         print('test1', completion)
         completion = tokenizer.parse_response(completion)
         print('test2', completion)
+        print('final answer', completion['content'])
         # interpret results
-        if "yes" in completion:
+        if "yes" in completion['content']:
             return True
-        elif "no" in completion:
+        elif "no" in completion['content']:
             return False
         else:
             remaining_times -= 1
