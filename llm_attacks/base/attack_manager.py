@@ -900,10 +900,12 @@ class AttackPrompt(object):
                 # average over the refusal tokens within the refusal phrase
                 # loss += temp_loss.mean(-1)
                 # count_loss += 1
+
                 all_losses.append(temp_loss.mean(-1))
 
         # average the loss over all sliding windows
         # loss = loss/count_loss
+
         # print("all losses", all_losses)
         stacked_tensor = torch.stack(all_losses, dim=0)
 
@@ -913,8 +915,14 @@ class AttackPrompt(object):
 
         # taking the max value across all windows for each candidate suffix
         # loss, _ = torch.max(stacked_tensor, dim=0)
+        
+        print("stacked tensor", stacked_tensor)
+        print("stacked tensor shape", stacked_tensor.shape)
 
-        # print("stacked tensor shape", stacked_tensor.shape)
+        variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
+        print("variance windows", variance_windows)
+        print("variance windows shape", variance_windows.shape)
+
         # print("values", topk_values.shape)
         # print("loss", loss)
         # print("loss shape", loss.shape)
