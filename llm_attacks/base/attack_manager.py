@@ -902,7 +902,7 @@ class AttackPrompt(object):
                 # count_loss += 1
 
                 # all_losses.append(temp_loss.mean(-1))
-                if torch.var(temp_loss.mean(-1)) > 1e-8:
+                if torch.var(temp_loss.mean(-1)) > 1e-4:
                     all_losses.append(temp_loss.mean(-1))
                     loss += temp_loss.mean(-1)
                     count_loss += 1
@@ -930,7 +930,7 @@ class AttackPrompt(object):
         # print("values", topk_values.shape)
         # print("loss", loss)
         # print("loss shape", loss.shape)
-        # print("count loss", count_loss)
+        print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
         return loss * self.para.augmented_loss_alpha
