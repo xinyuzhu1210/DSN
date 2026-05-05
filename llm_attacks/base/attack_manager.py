@@ -901,14 +901,14 @@ class AttackPrompt(object):
                 # loss += temp_loss.mean(-1)
                 # count_loss += 1
 
-                # all_losses.append(temp_loss.mean(-1))
-                if torch.var(temp_loss.mean(-1)) > 1e-4:
-                    all_losses.append(temp_loss.mean(-1))
-                    loss += temp_loss.mean(-1)
-                    count_loss += 1
+                all_losses.append(temp_loss.mean(-1))
+                # if torch.var(temp_loss.mean(-1)) > 1e-4:
+                #     all_losses.append(temp_loss.mean(-1))
+                #     loss += temp_loss.mean(-1)
+                #     count_loss += 1
 
         # average the loss over all sliding windows
-        loss = loss/count_loss
+        # loss = loss/count_loss
 
         # print("all losses", all_losses)
         stacked_tensor = torch.stack(all_losses, dim=0)
@@ -927,10 +927,20 @@ class AttackPrompt(object):
         print("variance windows", variance_windows)
         print("variance windows shape", variance_windows.shape)
 
+        ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
+        print("ten percent", ten_percent)
+        topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
+        filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
+        print(topk_indices.squeeze())
+        print(topk_indices.squeeze().shape)
+        print(filtered_stacked_tensor)
+        print(filtered_stacked_tensor.shape)
+        loss = torch.mean(filtered_stacked_tensor, dim=0)
+
         # print("values", topk_values.shape)
         # print("loss", loss)
         # print("loss shape", loss.shape)
-        print("count loss", count_loss)
+        # print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
         return loss * self.para.augmented_loss_alpha
