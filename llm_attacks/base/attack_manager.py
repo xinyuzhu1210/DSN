@@ -898,11 +898,11 @@ class AttackPrompt(object):
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
-                loss += temp_loss.mean(-1)
-                count_loss += 1
+                # loss += temp_loss.mean(-1)
+                # count_loss += 1
 
                 # all_losses.append(temp_loss.mean(-1))
-                if torch.var(temp_loss.mean(-1)) > 1e-4:
+                if torch.var(temp_loss.mean(-1)) > 1e-5:
                     all_losses.append(temp_loss.mean(-1))
                     loss += temp_loss.mean(-1)
                     count_loss += 1
