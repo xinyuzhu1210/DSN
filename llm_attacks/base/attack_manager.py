@@ -931,6 +931,7 @@ class AttackPrompt(object):
         print("ten percent", ten_percent)
         topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
         filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
+        print(topk_values)
         print(topk_indices.squeeze())
         print(topk_indices.squeeze().shape)
         print(filtered_stacked_tensor)
