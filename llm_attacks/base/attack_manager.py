@@ -902,7 +902,7 @@ class AttackPrompt(object):
                 count_loss += 1
 
                 # all_losses.append(temp_loss.mean(-1))
-                if torch.var(temp_loss.mean(-1)) > 1e-8:
+                if torch.var(temp_loss.mean(-1)) > 1e-5:
                     all_losses.append(temp_loss.mean(-1))
                     loss += temp_loss.mean(-1)
                     count_loss += 1
