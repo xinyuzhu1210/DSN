@@ -147,7 +147,6 @@
 # ../experiments/evalLastStep/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json 
 # ../experiments/evalJBBLastStep/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json --> JBB true
 
-
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
 # ../experiments/evalLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json
@@ -162,9 +161,9 @@
 # ../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalLastStep/20260506-02:36:34 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260506-02:36:34 1E0/qwen_dsn_25_offset0.json '
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 42 "$STR" False
+  python harmbench_only_evaluation.py 42 "$STR" True
 done                              # random_seed, logfile, UseJBB
