@@ -97,7 +97,7 @@ do
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=44 \
+        --config.random_seed_for_sampling_targets=41 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
     # evaluate upon the JailbreakBench dataset
@@ -112,7 +112,7 @@ do
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="evalJBBLastStep" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=44 \
+        --config.random_seed_for_sampling_targets=41 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
 done
