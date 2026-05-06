@@ -27,6 +27,7 @@ import os
 from iopath.common.file_io import PathManager as PathManagerBase
 from iopath.common.file_io import HTTPURLHandler
 from tqdm import tqdm
+from torch.distributions import Categorical
 
 # accommodate for the older transformers version 4.28.1
 try:
@@ -920,23 +921,42 @@ class AttackPrompt(object):
         # taking the max value across all windows for each candidate suffix
         # loss, _ = torch.max(stacked_tensor, dim=0)
         
-        print("stacked tensor", stacked_tensor)
-        print("stacked tensor shape", stacked_tensor.shape)
+        # only average the top 10% higher variance windows
+        # variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
+        # ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
+        # topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
+        # filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
+        # loss = torch.mean(filtered_stacked_tensor, dim=0)
+        # print("stacked tensor", stacked_tensor)
+        # print("stacked tensor shape", stacked_tensor.shape)
+        # print("variance windows", variance_windows)
+        # print("variance windows shape", variance_windows.shape)
+        # print("ten percent", ten_percent)
+        # print(topk_values)
+        # print(topk_indices.squeeze())
+        # print(topk_indices.squeeze().shape)
+        # print(filtered_stacked_tensor)
+        # print(filtered_stacked_tensor.shape)
 
-        variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
-        print("variance windows", variance_windows)
-        print("variance windows shape", variance_windows.shape)
-
-        ten_percent = math.ceil(stacked_tensor.shape[0] * 0.05)
-        print("ten percent", ten_percent)
-        topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
-        filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
-        print(topk_values)
-        print(topk_indices.squeeze())
-        print(topk_indices.squeeze().shape)
-        print(filtered_stacked_tensor)
-        print(filtered_stacked_tensor.shape)
+        # only average the top 10% lower entropy windows (lower entropy means that a few candidates might stick out more, so less uniform dist)
+        prob = F.softmax(-stacked_tensor, dim=1)
+        entropy = Categorical(probs=prob).entropy()
+        ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
+        # get the lowest k values and indices
+        topk_values, topk_indices = torch.topk(-entropy,k=ten_percent,dim=0)
+        filtered_stacked_tensor = stacked_tensor[topk_indices]
         loss = torch.mean(filtered_stacked_tensor, dim=0)
+        print("prob", prob)
+        print("prob shape", prob.shape)
+        print("entropy", entropy)
+        print("entropy shape", entropy.shape)
+        print("neg entropy", -entropy)
+        print("ten percent", ten_percent)
+        print("topk vals", -topk_values)
+        print("topk indices",topk_indices)
+        print("topk indices shape",topk_indices.shape)
+        print("filtered tensor",filtered_stacked_tensor)
+        print("filtered tensor shape",filtered_stacked_tensor.shape)
 
         # print("values", topk_values.shape)
         # print("loss", loss)
