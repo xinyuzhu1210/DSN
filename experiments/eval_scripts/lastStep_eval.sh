@@ -77,7 +77,7 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 # qwen original list top-10% of entropy windows seed 42
 # ../results_dsn/20260506-02:23:36 1E0/qwen_dsn_25_offset0.json
 # qwen tripled list top-10% of entropy windows seed 42
-# ../results_dsn/20260506-02:28:30 1E0/qwen_dsn_25_offset0.jso
+# ../results_dsn/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json 
 
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
 # ../results_dsn/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
@@ -88,7 +88,7 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 
 
 file_list=(
-    '../results_dsn/20260506-02:23:36 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
