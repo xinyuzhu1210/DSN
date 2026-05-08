@@ -88,7 +88,7 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 
 
 file_list=(
-    '../results_dsn/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
@@ -102,11 +102,11 @@ do
         --config.n_train_data=25 \
         --config.n_test_data=100 \
         --config.use_empty_system_prompt=False \
-        --config.eval_batchsize=25 \
+        --config.eval_batchsize=1 \
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=42 \
+        --config.random_seed_for_sampling_targets=41 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
     # evaluate upon the JailbreakBench dataset
@@ -117,11 +117,11 @@ do
         --config.n_train_data=100 \
         --config.n_test_data=0 \
         --config.use_empty_system_prompt=False \
-        --config.eval_batchsize=25 \
+        --config.eval_batchsize=1 \
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="evalJBBLastStep" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=42 \
+        --config.random_seed_for_sampling_targets=41 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
 done
