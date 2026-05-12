@@ -165,5 +165,5 @@ STRING_ARRAY=(
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 43 "$STR" True
+  python harmbench_only_evaluation.py 44 "$STR" True
 done                              # random_seed, logfile, UseJBB

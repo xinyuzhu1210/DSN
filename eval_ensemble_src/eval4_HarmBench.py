@@ -219,7 +219,7 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
             # generate evaluation answers based on the filled-in template above
             output_ids = cls_gemma.generate(
                 **encoded.to(cls_gemma.device),
-                do_sample=False,
+                # do_sample=False,
                 max_new_tokens=5,
             )
             # remove the prompt ids from the output ids, as both the prompt and answer are returned
