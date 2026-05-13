@@ -2092,7 +2092,7 @@ class EvaluateAttack(object):
                                     batch_input_ids,
                                     # beam search
                                     do_sample=False,
-                                    num_beams=1,
+                                    num_beams=9,
                                     attention_mask=batch_attention_mask,
                                     # compute generation length, prevents truncation
                                     max_new_tokens=max(max_new_len, max(batch_max_new)),
