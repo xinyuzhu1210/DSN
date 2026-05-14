@@ -196,6 +196,13 @@ class DSNPromptManager(PromptManager):
         # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
+        print("top k tokens based on gradient",top_indices)
+        print("control tokens",control_toks)
+        print("control tokens batchsize times",original_control_toks)
+        print("which positions to modify",new_token_pos)
+        print("pick from the top-k words",new_token_val)
+        print("new control tokens",new_control_toks)
+
         # return candidate suffixes, where each row is one candidate suffix
         # a candidate suffix only differs from the original suffix in 1 position
         # e.g one token id at one position is replaced with another in the original suffix

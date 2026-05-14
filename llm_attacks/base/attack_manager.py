@@ -862,7 +862,7 @@ class AttackPrompt(object):
         # print("length=", len(self.test_prefixes))
         # print("logits shape", logits.shape)
 
-        all_losses = []
+        # all_losses = []
         
         # loop over each refusal prefix/phrase
         for j_in_algorithm in range(len(self.test_prefixes)):
@@ -899,20 +899,22 @@ class AttackPrompt(object):
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
-                # loss += temp_loss.mean(-1)
-                # count_loss += 1
+                loss += temp_loss.mean(-1)
+                count_loss += 1
 
-                all_losses.append(temp_loss.mean(-1))
+                # for max, top-k, variance, and entropy aggregation methods
+                # all_losses.append(temp_loss.mean(-1))
+
                 # if torch.var(temp_loss.mean(-1)) > 1e-4:
                 #     all_losses.append(temp_loss.mean(-1))
                 #     loss += temp_loss.mean(-1)
                 #     count_loss += 1
 
         # average the loss over all sliding windows
-        # loss = loss/count_loss
+        loss = loss/count_loss
 
         # print("all losses", all_losses)
-        stacked_tensor = torch.stack(all_losses, dim=0)
+        # stacked_tensor = torch.stack(all_losses, dim=0)
 
         # topk averaging
         # topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
@@ -921,12 +923,12 @@ class AttackPrompt(object):
         # taking the max value across all windows for each candidate suffix
         # loss, _ = torch.max(stacked_tensor, dim=0)
         
-        # only average the top 10% higher variance windows
-        variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
-        ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
-        topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
-        filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
-        loss = torch.mean(filtered_stacked_tensor, dim=0)
+        # # only average the top 10% higher variance windows
+        # variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
+        # ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
+        # topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
+        # filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
+        # loss = torch.mean(filtered_stacked_tensor, dim=0)
         # print("stacked tensor", stacked_tensor)
         # print("stacked tensor shape", stacked_tensor.shape)
         # print("variance windows", variance_windows)
@@ -2091,8 +2093,8 @@ class EvaluateAttack(object):
                                 outputs = model.generate(
                                     batch_input_ids,
                                     # beam search
-                                    do_sample=False,
-                                    num_beams=9,
+                                    # do_sample=False,
+                                    # num_beams=9,
                                     attention_mask=batch_attention_mask,
                                     # compute generation length, prevents truncation
                                     max_new_tokens=max(max_new_len, max(batch_max_new)),
