@@ -196,9 +196,12 @@ class DSNPromptManager(PromptManager):
         # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
-        norm = torch.linalg.norm(grad.float(), dim=1)
+        cloned_grad = grad.clone()
+        cloned_grad[torch.isinf(cloned_grad)] = 0
+        cloned_grad[torch.isnan(cloned_grad)] = 0
+        norm = torch.linalg.norm(cloned_grad.float(), dim=1)
         print(torch.isnan(grad).any())
-        print(torch.isinf(grad).any())
+        print(torch.isinf(grad))
         print("norm vals", norm)
         print("norm shape", norm.shape)
         print("gradient shape", grad.shape)
