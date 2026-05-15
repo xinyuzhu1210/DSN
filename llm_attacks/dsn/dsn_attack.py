@@ -200,8 +200,10 @@ class DSNPromptManager(PromptManager):
         cloned_grad[torch.isinf(cloned_grad)] = 0
         cloned_grad[torch.isnan(cloned_grad)] = 0
         norm = torch.linalg.norm(cloned_grad.float(), dim=1)
-        print(torch.isnan(grad).any())
-        print(torch.isinf(grad))
+        prob = norm / (torch.sum(norm))
+        # print(torch.isnan(grad).any())
+        # print(torch.isinf(grad))
+        print(prob)
         print("norm vals", norm)
         print("norm shape", norm.shape)
         print("gradient shape", grad.shape)
