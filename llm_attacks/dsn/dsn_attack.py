@@ -197,6 +197,8 @@ class DSNPromptManager(PromptManager):
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
         norm = torch.linalg.norm(grad.float(), dim=1)
+        print(torch.isnan(grad).any())
+        print(torch.isinf(grad).any())
         print("norm vals", norm)
         print("norm shape", norm.shape)
         print("gradient shape", grad.shape)
