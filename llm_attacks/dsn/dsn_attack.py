@@ -196,27 +196,27 @@ class DSNPromptManager(PromptManager):
         # so for each row/candidate suffix, replace the old token at the specified position with the newly sampled token
         new_control_toks = original_control_toks.scatter_(1, new_token_pos.unsqueeze(-1), new_token_val)
 
-        cloned_grad = grad.clone()
-        cloned_grad[torch.isinf(cloned_grad)] = 0
-        cloned_grad[torch.isnan(cloned_grad)] = 0
-        norm = torch.linalg.norm(cloned_grad.float(), dim=1)
-        prob = norm / (torch.sum(norm))
-        important_coord = torch.multinomial(prob, batch_size, replacement=True)
-        # print(torch.isnan(grad).any())
-        # print(torch.isinf(grad))
-        print(prob)
-        print(important_coord)
-        print("norm vals", norm)
-        print("norm shape", norm.shape)
-        print("gradient shape", grad.shape)
-        print("gradients", grad)
-        print("top k tokens based on gradient",top_indices)
-        print("control tokens",control_toks)
-        print("control tokens batchsize times",original_control_toks)
-        print("which positions to modify",new_token_pos)
-        print(len(new_token_pos))
-        print("pick from the top-k words",new_token_val)
-        print("new control tokens",new_control_toks)
+        # cloned_grad = grad.clone()
+        # cloned_grad[torch.isinf(cloned_grad)] = 0
+        # cloned_grad[torch.isnan(cloned_grad)] = 0
+        # norm = torch.linalg.norm(cloned_grad.float(), dim=1)
+        # prob = norm / (torch.sum(norm))
+        # important_coord = torch.multinomial(prob, batch_size, replacement=True)
+        # # print(torch.isnan(grad).any())
+        # # print(torch.isinf(grad))
+        # print(prob)
+        # print(important_coord)
+        # print("norm vals", norm)
+        # print("norm shape", norm.shape)
+        # print("gradient shape", grad.shape)
+        # print("gradients", grad)
+        # print("top k tokens based on gradient",top_indices)
+        # print("control tokens",control_toks)
+        # print("control tokens batchsize times",original_control_toks)
+        # print("which positions to modify",new_token_pos)
+        # print(len(new_token_pos))
+        # print("pick from the top-k words",new_token_val)
+        # print("new control tokens",new_control_toks)
 
         # return candidate suffixes, where each row is one candidate suffix
         # a candidate suffix only differs from the original suffix in 1 position
