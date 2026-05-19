@@ -858,7 +858,7 @@ class AttackPrompt(object):
                 return loss.squeeze(1)
         crit = UnlikelihoodLoss()
 
-        print("refusal prefixes:", self.test_prefixes)
+        # print("refusal prefixes:", self.test_prefixes)
         # print("length=", len(self.test_prefixes))
         # print("logits shape", logits.shape)
 
