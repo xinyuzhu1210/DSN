@@ -93,7 +93,7 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 
 
 file_list=(
-    '../results_dsn/20260520-00:47:50 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
