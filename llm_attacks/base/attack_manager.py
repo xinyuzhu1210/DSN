@@ -2095,9 +2095,9 @@ class EvaluateAttack(object):
                                     # beam search
                                     do_sample=False,
                                     num_beams=9,
-                                    num_return_sequences=9,
-                                    return_dict_in_generate=True,
-                                    output_scores=True,
+                                    # num_return_sequences=9,
+                                    # return_dict_in_generate=True,
+                                    # output_scores=True,
                                     # ...
                                     attention_mask=batch_attention_mask,
                                     # compute generation length, prevents truncation
@@ -2113,7 +2113,7 @@ class EvaluateAttack(object):
                             assert False, "Something happens regarding the model.generate function. Check the model file or generation_config.json file"
 
                         # decode output token ids into text/string
-                        batch_outputs = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
+                        batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
                         print(batch_outputs)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         # remove prompt part from the output string
