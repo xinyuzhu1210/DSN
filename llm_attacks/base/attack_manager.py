@@ -2093,8 +2093,12 @@ class EvaluateAttack(object):
                                 outputs = model.generate(
                                     batch_input_ids,
                                     # beam search
-                                    # do_sample=False,
-                                    # num_beams=1,
+                                    do_sample=False,
+                                    num_beams=9,
+                                    num_return_sequences=5,
+                                    return_dict_in_generate=True,
+                                    output_scores=True,
+                                    # ...
                                     attention_mask=batch_attention_mask,
                                     # compute generation length, prevents truncation
                                     max_new_tokens=max(max_new_len, max(batch_max_new)),
@@ -2110,6 +2114,7 @@ class EvaluateAttack(object):
 
                         # decode output token ids into text/string
                         batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+                        print(batch_outputs)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         # remove prompt part from the output string
                         batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
