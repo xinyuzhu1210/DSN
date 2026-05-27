@@ -2111,9 +2111,12 @@ class EvaluateAttack(object):
                                 max_trial_times -= 1
                         if max_trial_times <= 0 and not succeed_generate:
                             assert False, "Something happens regarding the model.generate function. Check the model file or generation_config.json file"
+                        
+                        # beam candidates version
+                        # r = [x for x in a for _ in range(9)]
 
                         # decode output token ids into text/string
-                        batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+                        batch_outputs = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
                         print(batch_outputs)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         print(gen_start_idx)
