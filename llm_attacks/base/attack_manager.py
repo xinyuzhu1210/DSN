@@ -2095,7 +2095,7 @@ class EvaluateAttack(object):
                                     # beam search
                                     do_sample=False,
                                     num_beams=9,
-                                    # num_return_sequences=9,
+                                    num_return_sequences=9
                                     # return_dict_in_generate=True,
                                     # output_scores=True,
                                     # ...
@@ -2118,6 +2118,7 @@ class EvaluateAttack(object):
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         # remove prompt part from the output string
                         batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
+                        print(batch_outputs)
                         prompt_inputs = batch
                         all_outputs.extend(batch_outputs)
                         gen_inputs.extend(prompt_inputs)
