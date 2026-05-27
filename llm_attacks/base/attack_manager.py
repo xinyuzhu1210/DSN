@@ -2155,7 +2155,9 @@ class EvaluateAttack(object):
                         print("input string:", input_str)
                         print("target string:", target)
                         print("generated string:", gen_str)
-                        print("beam candidates", beam_candidates)
+                        print("beam candidates:", beam_candidates)
+                        for i in range(len(beam_candidates)): 
+                            print(f"candidate {i}: {beam_candidates[i]}")
                         # print("classifier 1", pipe(gen_str))
                         print("classifier 2", pipe_1(gen_str))
                         output_class = pipe_1(gen_str)
