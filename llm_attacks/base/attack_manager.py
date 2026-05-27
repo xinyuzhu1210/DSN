@@ -2095,7 +2095,7 @@ class EvaluateAttack(object):
                                     # beam search
                                     do_sample=False,
                                     num_beams=9,
-                                    num_return_sequences=9
+                                    num_return_sequences=9,
                                     # return_dict_in_generate=True,
                                     # output_scores=True, 
                                     # ...
