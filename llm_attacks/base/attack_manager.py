@@ -2116,6 +2116,7 @@ class EvaluateAttack(object):
                         batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
                         print(batch_outputs)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
+                        print(gen_start_idx)
                         # remove prompt part from the output string
                         batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
                         print(batch_outputs)
