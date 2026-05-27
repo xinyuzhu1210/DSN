@@ -2113,8 +2113,7 @@ class EvaluateAttack(object):
                             assert False, "Something happens regarding the model.generate function. Check the model file or generation_config.json file"
                         
                         # beam candidates version
-                        # r = [x for x in a for _ in range(9)]
-                        batch_outputs = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
+                        batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
                         print(batch_outputs)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         gen_start_idx_nr_beams_duplicate = [x for x in gen_start_idx for _ in range(9)]
@@ -2128,10 +2127,10 @@ class EvaluateAttack(object):
                         print(sliced_beam_outputs)
                         print(len(sliced_beam_outputs))
                         batch_outputs = [output_list[0] for output_list in sliced_beam_outputs]
+                        print(batch_outputs)
 
-
-                        # decode output token ids into text/string
-                        # batch_outputs = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
+                        # # decode output token ids into text/string
+                        # batch_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
                         # print(batch_outputs)
                         # gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
                         # print(gen_start_idx)
