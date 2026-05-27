@@ -2114,15 +2114,30 @@ class EvaluateAttack(object):
                         
                         # beam candidates version
                         # r = [x for x in a for _ in range(9)]
-
-                        # decode output token ids into text/string
                         batch_outputs = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
                         print(batch_outputs)
                         gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
-                        print(gen_start_idx)
+                        gen_start_idx_nr_beams_duplicate = [x for x in gen_start_idx for _ in range(9)]
+                        print(gen_start_idx_nr_beams_duplicate)
                         # remove prompt part from the output string
-                        batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
+                        batch_outputs = [output[gen_start_idx_nr_beams_duplicate[i]:] for i, output in enumerate(batch_outputs)]
                         print(batch_outputs)
+                        print(len(batch_outputs))
+                        slice_nr = 9 
+                        sliced_beam_outputs = [batch_outputs[i:i + slice_nr] for i in range(0, len(batch_outputs), slice_nr)]
+                        print(sliced_beam_outputs)
+                        print(len(sliced_beam_outputs))
+                        batch_outputs = [output_list[0] for output_list in sliced_beam_outputs]
+
+
+                        # decode output token ids into text/string
+                        # batch_outputs = tokenizer.batch_decode(outputs[0], skip_special_tokens=True)
+                        # print(batch_outputs)
+                        # gen_start_idx = [len(tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) for i in range(len(batch_input_ids))]
+                        # print(gen_start_idx)
+                        # # remove prompt part from the output string
+                        # batch_outputs = [output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)]
+                        # print(batch_outputs)
                         prompt_inputs = batch
                         all_outputs.extend(batch_outputs)
                         gen_inputs.extend(prompt_inputs)
