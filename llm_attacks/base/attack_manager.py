@@ -2067,6 +2067,7 @@ class EvaluateAttack(object):
                     targets = [p.target for p in attack.prompts[0]._prompts]
                     all_outputs = []
                     gen_inputs = []
+                    # beam search candidates
                     candidate_outputs = []
                     if len(all_inputs) // batch_size == len(all_inputs) / batch_size:
                         temp_length = len(all_inputs) // batch_size
@@ -2096,6 +2097,7 @@ class EvaluateAttack(object):
                                     # beam search
                                     do_sample=False,
                                     num_beams=9,
+                                    # show beam candidate outputs
                                     num_return_sequences=9,
                                     # return_dict_in_generate=True,
                                     # output_scores=True, 
@@ -2134,6 +2136,7 @@ class EvaluateAttack(object):
                         prompt_inputs = batch
                         all_outputs.extend(batch_outputs)
                         gen_inputs.extend(prompt_inputs)
+                        # beam search candidates
                         candidate_outputs.extend(sliced_beam_outputs)
                         # print(all_outputs)
                         print(len(all_outputs))
@@ -2155,7 +2158,8 @@ class EvaluateAttack(object):
                         print("input string:", input_str)
                         print("target string:", target)
                         print("generated string:", gen_str)
-                        print("beam candidates:", beam_candidates)
+                        # beam search candidates
+                        print("beam candidates:")
                         for i in range(len(beam_candidates)): 
                             print(f"candidate {i}: {beam_candidates[i]}")
                         # print("classifier 1", pipe(gen_str))
