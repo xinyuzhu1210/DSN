@@ -2097,7 +2097,7 @@ class EvaluateAttack(object):
                                     num_beams=9,
                                     num_return_sequences=9
                                     # return_dict_in_generate=True,
-                                    # output_scores=True,
+                                    # output_scores=True, 
                                     # ...
                                     attention_mask=batch_attention_mask,
                                     # compute generation length, prevents truncation
