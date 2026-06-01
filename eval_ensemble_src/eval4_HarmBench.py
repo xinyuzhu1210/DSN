@@ -222,14 +222,9 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
                 do_sample=False,
                 max_new_tokens=5,
             )
-            # remove the prompt ids from the output ids, as both the prompt and answer are returned
-            # output_ids = output_ids[:, encoded.input_ids.shape[1]:]
         # decode output into text
         completion = tokenizer_gemma.decode(output_ids[0][input_len:], skip_special_tokens=False)
-        # print('test1', completion)
         completion = tokenizer_gemma.parse_response(completion)
-        # print('test2', completion)
-        # print('final answer', completion['content'])
         print("Gemma4 classification", completion['content'].lower())
 
         # interpret results
@@ -239,6 +234,6 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
             return False
         else:
             remaining_times -= 1
-            print("try another round HB, seems not working...")
+            print("try another round Gemma, seems not working...")
     assert False, "Too many trials..."
     # torch.cuda.empty_cache()

@@ -105,6 +105,7 @@
 # Qwen same seed 41 test JBB true
 # ../experiments/evalJBBLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260206-17:14:48 1E0/qwen_dsn_25_offset0.json
+
 # Qwen tripled list of refusal words
 # ../experiments/evalLastStep/20260326-02:09:41 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260326-02:18:06 1E0/qwen_dsn_25_offset0.json
@@ -117,6 +118,7 @@
 # ../experiments/evalJBBLastStep/20260326-02:20:49 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260326-02:22:11 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260326-02:24:37 1E0/qwen_dsn_25_offset0.json
+
 # Qwen tripled list seed 42 top-k average
 # ../experiments/evalLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json
 # Qwen tripled list seed 42 top-k average --> JBB true
@@ -173,6 +175,19 @@
 # ../experiments/evalJBBLastStep/20260526-04:52:33 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260526-04:54:55 1E0/qwen_dsn_25_offset0.json
 
+# Qwen2-7B train, batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, doubled prefixes list
+# ../experiments/evalLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json
+# Qwen2-7B train, batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, doubled prefixes list --> JBB True
+# ../experiments/evalJBBLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-01:17:29 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-01:18:57 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260214-01:20:00 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260216-18:34:40 1E0/qwen_dsn_25_offset0.json
+
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
 # ../experiments/evalLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json
@@ -187,9 +202,9 @@
 # ../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260526-04:54:55 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260214-01:14:28 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 45 "$STR" True
+  python harmbench_only_evaluation.py 41 "$STR" False
 done                              # random_seed, logfile, UseJBB
