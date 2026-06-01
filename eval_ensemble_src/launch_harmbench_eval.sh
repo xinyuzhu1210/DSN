@@ -146,10 +146,20 @@
 # qwen tripled list top-10% of entropy windows seed 42
 # ../experiments/evalLastStep/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json 
 # ../experiments/evalJBBLastStep/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json --> JBB true
-
+ 
 # qwen seed 42 half of list
+# ../experiments/evalLastStep/20260526-04:37:59 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260518-23:00:20 1E0/qwen_dsn_25_offset0.json
-# ../experiments/evalJBBLastStep/20260518-23:00:20 1E0/qwen_dsn_25_offset0.json --> JBB true
+# ../experiments/evalLastStep/20260526-04:42:18 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260526-04:44:02 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260526-04:46:16 1E0/qwen_dsn_25_offset0.json
+# qwen seed 42 half of list --> JBB True
+# ../experiments/evalJBBLastStep/20260526-04:37:59 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260518-23:00:20 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-04:42:18 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-04:44:02 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-04:46:16 1E0/qwen_dsn_25_offset0.json
+
 # qwen seed 42 curated list
 # ../experiments/evalLastStep/20260520-00:47:50 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260520-00:47:50 1E0/qwen_dsn_25_offset0.json --> JBB true
@@ -168,9 +178,9 @@
 # ../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260526-04:37:59 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 45 "$STR" True
+  python harmbench_only_evaluation.py 41 "$STR" False
 done                              # random_seed, logfile, UseJBB
