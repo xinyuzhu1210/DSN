@@ -214,6 +214,33 @@
 # ../experiments/evalJBBLastStep/20260311-04:35:24 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260311-04:36:33 1E0/qwen_dsn_25_offset0.json
 
+# Qwen tripled list seed 42 top-k average
+# ../experiments/evalLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json --> JBB true
+# Qwen tripled list seed 42 max() operation
+# ../experiments/evalLastStep/20260414-00:58:27 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260414-00:58:27 1E0/qwen_dsn_25_offset0.json --> JBB true
+# qwen tripled list top-10% of variance windows seed 42
+# ../experiments/evalLastStep/20260506-02:38:57 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260506-02:38:57 1E0/qwen_dsn_25_offset0.json --> JBB true
+# qwen tripled list top-10% of entropy windows seed 42
+# ../experiments/evalLastStep/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json 
+# ../experiments/evalJBBLastStep/20260506-02:28:30 1E0/qwen_dsn_25_offset0.json --> JBB true
+
+# Qwen original list seed 42 top-k average
+# ../experiments/evalLastStep/20260414-02:57:13 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260414-02:57:13 1E0/qwen_dsn_25_offset0.json --> JBB true
+# Qwen original list seed 42 max() operation
+# ../experiments/evalLastStep/20260414-02:54:44 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260414-02:54:44 1E0/qwen_dsn_25_offset0.json --> JBB true
+# qwen original list top-10% of variance windows seed 42
+# ../experiments/evalLastStep/20260506-02:36:34 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260506-02:36:34 1E0/qwen_dsn_25_offset0.json --> JBB true
+# qwen original list top-10% of entropy windows seed 42
+# ../experiments/evalLastStep/20260506-02:23:36 1E0/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260506-02:23:36 1E0/qwen_dsn_25_offset0.json --> JBB true
+
+
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
 # ../experiments/evalLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json
@@ -228,9 +255,9 @@
 # ../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260311-04:36:33 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260410-01:04:26 1E0/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 45 "$STR" True
+  python harmbench_only_evaluation.py 42 "$STR" False
 done                              # random_seed, logfile, UseJBB
