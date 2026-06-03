@@ -271,5 +271,5 @@ STRING_ARRAY=(
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 42 "$STR" False
+  python harmbench_only_evaluation.py 42 "$STR" False 
 done                              # random_seed, logfile, UseJBB
