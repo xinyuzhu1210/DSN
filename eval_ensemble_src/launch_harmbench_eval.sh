@@ -240,7 +240,6 @@
 # ../experiments/evalLastStep/20260506-02:23:36 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260506-02:23:36 1E0/qwen_dsn_25_offset0.json --> JBB true
 
-
 # qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
 # ../experiments/evalLastStep/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalLastStep/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json
@@ -254,10 +253,23 @@
 # ../experiments/evalJBBLastStep/20260209-19:58:46 1E0/qwen_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json
 
+# qwen GCG seeds 41, 42, 43, 44, 45
+# ../experiments/evalLastStep/20260526-05:07:02 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260526-05:09:39 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260526-05:13:05 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260526-05:15:03 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260526-05:20:00 1EOriginal/qwen_dsn_25_offset0.json
+# qwen GCG seeds 41, 42, 43, 44, 45 --> JBB True
+# ../experiments/evalJBBLastStep/20260526-05:07:02 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-05:09:39 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-05:13:05 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-05:15:03 1EOriginal/qwen_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260526-05:20:00 1EOriginal/qwen_dsn_25_offset0.json
+
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260209-20:22:30 1E0/qwen_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260526-05:07:02 1EOriginal/qwen_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 45 "$STR" True
+  python harmbench_only_evaluation.py 41 "$STR" False
 done                              # random_seed, logfile, UseJBB
