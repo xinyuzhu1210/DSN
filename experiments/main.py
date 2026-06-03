@@ -27,7 +27,7 @@ def main(_):
 
     params = _CONFIG.value
     # set random seed
-    set_seed(params.random_seed_for_sampling_targets)
+    # set_seed(params.random_seed_for_sampling_targets)
     # dynamically import llm_attacks.dsn (in this case)
     attack_lib = dynamic_import(f'llm_attacks.{params.attack}')
 
