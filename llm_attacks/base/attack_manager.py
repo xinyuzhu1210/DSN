@@ -2095,8 +2095,8 @@ class EvaluateAttack(object):
                                 outputs = model.generate(
                                     batch_input_ids,
                                     # beam search
-                                    # do_sample=False,
-                                    # num_beams=9,
+                                    do_sample=False,
+                                    num_beams=3,
                                     ## show beam candidate outputs
                                     # num_return_sequences=9,
                                     attention_mask=batch_attention_mask,
