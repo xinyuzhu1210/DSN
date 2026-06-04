@@ -93,7 +93,7 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 # ../results_dsn/20260526-04:52:33 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260526-04:54:55 1E0/qwen_dsn_25_offset0.json
 
-# qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false
+# qwen batch_size 41, 42, 43, 44, 45, aug_sampling = false 
 # ../results_dsn/20260206-17:12:43 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260209-19:52:54 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260209-19:56:48 1E0/qwen_dsn_25_offset0.json
@@ -107,16 +107,23 @@ export model=qwen # choose from: gemma, gemma2, llama2, llama2_13b, llama3, llam
 # ../results_dsn/20260526-05:15:03 1EOriginal/qwen_dsn_25_offset0.json
 # ../results_dsn/20260526-05:20:00 1EOriginal/qwen_dsn_25_offset0.json
 
-# qwen no seed
+# qwen DSN no seed (1x original rm method en 1x new rm method)
 # ../results_dsn/20260203-02:01:22 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:04:40 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:06:12 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:07:25 1E0/qwen_dsn_25_offset0.json
 # ../results_dsn/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json
 
+# Qwen2-7B train, batch size 256, seed 41, 42, 43, 44, 45, use_aug_sampling=False, Magic integration
+# ../results_dsn/20260311-04:27:52 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260311-04:30:23 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260311-04:33:09 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260311-04:35:24 1E0/qwen_dsn_25_offset0.json
+# ../results_dsn/20260311-04:36:33 1E0/qwen_dsn_25_offset0.json
+
 
 file_list=(
-    '../results_dsn/20260203-02:09:25 1E0/qwen_dsn_25_offset0.json'
+    '../results_dsn/20260311-04:27:52 1E0/qwen_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
@@ -134,7 +141,7 @@ do
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=45 \
+        --config.random_seed_for_sampling_targets=41 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
     # evaluate upon the JailbreakBench dataset
@@ -149,7 +156,7 @@ do
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="evalJBBLastStep" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=45 \
+        --config.random_seed_for_sampling_targets=41 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
 done
