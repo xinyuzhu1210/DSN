@@ -294,9 +294,9 @@
 
 
 STRING_ARRAY=(
-  '../experiments/evalLastStep/20260127-03:30:44 1E0/llama31_dsn_25_offset0.json'
+  '../experiments/evalJBBLastStep/20260127-03:30:44 1E0/llama31_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py -1 "$STR" False 
+  python harmbench_only_evaluation.py -1 "$STR" True 
 done                              # random_seed, logfile, UseJBB
