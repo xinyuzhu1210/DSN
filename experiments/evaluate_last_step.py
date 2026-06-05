@@ -93,7 +93,7 @@ def main(_):
     print(params)
     print(flag)
 
-    # set_seed(params.random_seed_for_sampling_targets)
+    set_seed(params.random_seed_for_sampling_targets)
 
     with open(params.logfile, 'r') as f:
         log = json.load(f)
