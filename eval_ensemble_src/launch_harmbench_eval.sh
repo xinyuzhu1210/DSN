@@ -306,9 +306,9 @@
 # ../experiments/evalJBBLastStep/20260603-05:58:48 1E0/llama31_dsn_25_offset0.json
 
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260603-05:49:54 1E0/llama31_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260603-05:54:17 1E0/llama31_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 41 "$STR" True 
+  python harmbench_only_evaluation.py 42 "$STR" False 
 done                              # random_seed, logfile, UseJBB
