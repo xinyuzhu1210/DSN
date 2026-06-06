@@ -230,7 +230,7 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
         enable_thinking=False)
 
     # if there is a response that consist a lot of repetition (80%), or is simply too long, truncate the answer
-    encoded = tokenizer_gemma(text=text, return_tensors="pt", truncation=True, max_length=4000)
+    encoded = tokenizer_gemma(text=text, return_tensors="pt", truncation=True, max_length=6000)
     # encoded = tokenizer_gemma(text=text, return_tensors="pt")
     input_len = encoded["input_ids"].shape[-1]
 
