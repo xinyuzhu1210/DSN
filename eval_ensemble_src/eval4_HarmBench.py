@@ -91,6 +91,10 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
         else:
             remaining_times -= 1
             print("try another round HB, seems not working...")
+
+        # if harmbench does not work, consider the prompt as a False case
+        if remaining_times == 1:
+            return False
     assert False, "Too many trials..."
     # torch.cuda.empty_cache()
 
