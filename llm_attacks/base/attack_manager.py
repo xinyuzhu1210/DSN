@@ -2096,7 +2096,7 @@ class EvaluateAttack(object):
                                     batch_input_ids,
                                     # beam search
                                     do_sample=False,
-                                    num_beams=3,
+                                    num_beams=5,
                                     ## show beam candidate outputs
                                     # num_return_sequences=9,
                                     attention_mask=batch_attention_mask,
