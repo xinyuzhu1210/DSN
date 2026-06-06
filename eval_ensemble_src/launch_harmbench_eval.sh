@@ -305,10 +305,23 @@
 # ../experiments/evalJBBLastStep/20260603-05:57:22 1E0/llama31_dsn_25_offset0.json
 # ../experiments/evalJBBLastStep/20260603-05:58:48 1E0/llama31_dsn_25_offset0.json
 
+# llama31 GCG seeds 41 42 43 44 45 batchsize 512
+# ../experiments/evalLastStep/20260603-06:07:12 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260603-06:08:29 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260603-06:10:08 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260603-06:11:04 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalLastStep/20260603-06:12:33 1EOriginal/llama31_dsn_25_offset0.json 
+# llama31 GCG seeds 41 42 43 44 45 batchsize 512 --> JBB true
+# ../experiments/evalJBBLastStep/20260603-06:07:12 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260603-06:08:29 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260603-06:10:08 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260603-06:11:04 1EOriginal/llama31_dsn_25_offset0.json
+# ../experiments/evalJBBLastStep/20260603-06:12:33 1EOriginal/llama31_dsn_25_offset0.json 
+
 STRING_ARRAY=(
-  '../experiments/evalJBBLastStep/20260603-05:58:48 1E0/llama31_dsn_25_offset0.json'
+  '../experiments/evalLastStep/20260603-06:07:12 1EOriginal/llama31_dsn_25_offset0.json'
 )
 
 for STR in "${STRING_ARRAY[@]}"; do
-  python harmbench_only_evaluation.py 45 "$STR" True 
+  python harmbench_only_evaluation.py 41 "$STR" False 
 done                              # random_seed, logfile, UseJBB
