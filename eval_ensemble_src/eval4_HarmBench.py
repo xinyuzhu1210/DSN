@@ -61,6 +61,11 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
 
     print("Harmbench goal", goal)
     print("Harmbench answer", answer)
+    
+    print('test unique characters', len(set(answer)))
+    print('len output', len(answer))
+    if (1-(len(set(answer)))) > 0.8: 
+        answer = answer[:len(answer) * 0.2]
 
     # fills the classifier template given above
     inputs = [LLAMA2_CLS_PROMPT['prompt'].format(behavior=goal, generation=answer) for goal, answer in zip(goal, answer)]
@@ -93,8 +98,8 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
             print("try another round HB, seems not working...")
 
         # if harmbench does not work, consider the prompt as a False case
-        if remaining_times == 1:
-            return False
+        # if remaining_times == 1:
+        #     return False
     assert False, "Too many trials..."
     # torch.cuda.empty_cache()
 
@@ -188,6 +193,11 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
 
     print("Gemma4 goal", goal)
     print("Gemma answer", answer)
+
+
+    if (1-(len(set([answer])))) > 0.8: 
+        answer = answer[:len(answer) * 0.2]
+
 
     # prompt template that is given to the classifier; e.g. instructions that are given to the llm
     messages = [
