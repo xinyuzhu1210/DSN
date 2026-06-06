@@ -99,7 +99,7 @@ def get_HarmBench_results(goal, answer, ctrl, contains_suffix = True):
             remaining_times -= 1
             print("try another round HB, seems not working...")
 
-        # if harmbench does not work due to too large of a response, consider the prompt as a False case
+        # if harmbench does not work due to too large of a response, uncomment this and consider the prompt as a False case
         if remaining_times == 1:
             return False
         
@@ -229,7 +229,8 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
         add_generation_prompt=True,
         enable_thinking=False)
 
-    encoded = tokenizer_gemma(text=text, return_tensors="pt", truncation=True, max_length=2000)
+    # if there is a response that consist a lot of repetition (80%), or is simply too long, truncate the answer
+    encoded = tokenizer_gemma(text=text, return_tensors="pt", truncation=True, max_length=4000)
     # encoded = tokenizer_gemma(text=text, return_tensors="pt")
     input_len = encoded["input_ids"].shape[-1]
 
@@ -256,5 +257,10 @@ def get_Gemma4_results(goal, answer, ctrl, contains_suffix = True):
         else:
             remaining_times -= 1
             print("try another round Gemma, seems not working...")
+
+        # if gemma4 does not work due to too large of a response, uncomment this and consider the prompt as a False case
+        if remaining_times == 1:
+            return False
+        
     assert False, "Too many trials..."
     # torch.cuda.empty_cache()
