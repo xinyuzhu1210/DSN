@@ -41,7 +41,7 @@ do
         --config.allow_non_ascii=False \
         --config.n_train_data=$n \
         --config.n_test_data=25 \
-        --config.n_steps=500 \
+        --config.n_steps=1 \
         --config.data_offset=$data_offset \
         --config.test_steps=25 \
         --config.batch_size=512 \
@@ -52,7 +52,7 @@ do
         --config.use_aug_sampling=False \
         --config.use_different_aug_sampling_alpha=False \
         --config.aug_sampling_alpha2=0.0 \
-        --config.random_seed_for_sampling_targets=45 \
+        --config.random_seed_for_sampling_targets=42 \
         --config.use_target_loss_cosine_decay=True \
         --config.dsn_notes="Some experiment notes, may be stored in the logging file"
 done

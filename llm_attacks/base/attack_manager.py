@@ -853,7 +853,7 @@ class AttackPrompt(object):
                 # compute the unlikelihood loss -log(1-p) 
                 loss = -torch.log(1 - p)
                 loss = torch.clamp(loss, min=0, max=10)
-                # print('loss shape', loss.shape)
+                print('loss shape', loss.shape)
                 # a high loss means that the model is likely to produce a refusal phrase a that specific window
                 return loss.squeeze(1)
         crit = UnlikelihoodLoss()
@@ -861,8 +861,8 @@ class AttackPrompt(object):
         # print("refusal prefixes:", self.test_prefixes)
         # print("length=", len(self.test_prefixes))
         # print("logits shape", logits.shape)
-
-        # all_losses = []
+        
+        all_losses = []
         
         # loop over each refusal prefix/phrase
         for j_in_algorithm in range(len(self.test_prefixes)):
@@ -899,11 +899,11 @@ class AttackPrompt(object):
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
-                loss += temp_loss.mean(-1)
-                count_loss += 1
+                # loss += temp_loss.mean(-1)
+                # count_loss += 1
 
                 # for max, top-k, variance, and entropy aggregation methods
-                # all_losses.append(temp_loss.mean(-1))
+                all_losses.append(temp_loss.mean(-1))
 
                 # if torch.var(temp_loss.mean(-1)) > 1e-4:
                 #     all_losses.append(temp_loss.mean(-1))
@@ -911,14 +911,14 @@ class AttackPrompt(object):
                 #     count_loss += 1
 
         # average the loss over all sliding windows
-        loss = loss/count_loss
+        # loss = loss/count_loss
 
-        # print("all losses", all_losses)
-        # stacked_tensor = torch.stack(all_losses, dim=0)
+        print("all losses", all_losses)
+        stacked_tensor = torch.stack(all_losses, dim=0)
 
         # topk averaging
-        # topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
-        # loss = torch.mean(topk_values, dim=0)
+        topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
+        loss = torch.mean(topk_values, dim=0)
 
         # taking the max value across all windows for each candidate suffix
         # loss, _ = torch.max(stacked_tensor, dim=0)
@@ -961,8 +961,8 @@ class AttackPrompt(object):
         # print("filtered tensor shape",filtered_stacked_tensor.shape)
 
         # print("values", topk_values.shape)
-        # print("loss", loss)
-        # print("loss shape", loss.shape)
+        print("loss", loss)
+        print("loss shape", loss.shape)
         # print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
