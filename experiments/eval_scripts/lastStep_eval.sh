@@ -140,7 +140,7 @@ export model=llama31 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, l
 # ../results_dsn/20260603-06:08:29 1EOriginal/llama31_dsn_25_offset0.json
 # ../results_dsn/20260603-06:10:08 1EOriginal/llama31_dsn_25_offset0.json
 # ../results_dsn/20260603-06:11:04 1EOriginal/llama31_dsn_25_offset0.json
-# ../results_dsn/20260603-06:12:33 1EOriginal/llama31_dsn_25_offset0.json 
+# ../results_dsn/20260603-06:12:33 1EOriginal/llama31_dsn_25_offset0.json
 
 
 file_list=(
