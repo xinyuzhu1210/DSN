@@ -918,8 +918,8 @@ class AttackPrompt(object):
         stacked_tensor = torch.stack(all_losses, dim=0)
 
         # topk averaging
-        # topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
-        # loss = torch.mean(topk_values, dim=0)
+        topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
+        loss = torch.mean(topk_values, dim=0)
 
         # taking the max value across all windows for each candidate suffix
         # loss, _ = torch.max(stacked_tensor, dim=0)
@@ -941,14 +941,14 @@ class AttackPrompt(object):
         # print(filtered_stacked_tensor)
         # print(filtered_stacked_tensor.shape)
 
-        # only average the top 10% lower entropy windows (lower entropy means that a few candidates might stick out more, so less uniform dist)
-        prob = F.softmax(-stacked_tensor, dim=1)
-        entropy = Categorical(probs=prob).entropy()
-        ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
-        # get the lowest k values and indices
-        topk_values, topk_indices = torch.topk(-entropy,k=ten_percent,dim=0)
-        filtered_stacked_tensor = stacked_tensor[topk_indices]
-        loss = torch.mean(filtered_stacked_tensor, dim=0)
+        # # only average the top 10% lower entropy windows (lower entropy means that a few candidates might stick out more, so less uniform dist)
+        # prob = F.softmax(-stacked_tensor, dim=1)
+        # entropy = Categorical(probs=prob).entropy()
+        # ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
+        # # get the lowest k values and indices
+        # topk_values, topk_indices = torch.topk(-entropy,k=ten_percent,dim=0)
+        # filtered_stacked_tensor = stacked_tensor[topk_indices]
+        # loss = torch.mean(filtered_stacked_tensor, dim=0)
         # print("prob", prob)
         # print("prob shape", prob.shape)
         # print("entropy", entropy)
