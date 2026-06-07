@@ -853,7 +853,7 @@ class AttackPrompt(object):
                 # compute the unlikelihood loss -log(1-p) 
                 loss = -torch.log(1 - p)
                 loss = torch.clamp(loss, min=0, max=10)
-                print('loss shape', loss.shape)
+                # print('loss shape', loss.shape)
                 # a high loss means that the model is likely to produce a refusal phrase a that specific window
                 return loss.squeeze(1)
         crit = UnlikelihoodLoss()
