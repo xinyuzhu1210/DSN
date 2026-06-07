@@ -165,7 +165,7 @@ export model=llama31 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, l
 
 
 file_list=(
-    '../results_dsn/20260605-03:01:14 1E0/llama31_dsn_25_offset0.json'
+    '../results_dsn/20260605-03:02:07 1E0/llama31_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
@@ -183,7 +183,7 @@ do
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=42 \
+        --config.random_seed_for_sampling_targets=43 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
     # evaluate upon the JailbreakBench dataset
@@ -198,7 +198,7 @@ do
         --config.eval_max_new_len=512 \
         --config.eval_target_folder_name="evalJBBLastStep" \
         --config.logfile="${file_path}" \
-        --config.random_seed_for_sampling_targets=42 \
+        --config.random_seed_for_sampling_targets=43 \
         --config.dsn_notes="For the last step, by generating 512 tokens, eval DSN by Refusal Matching...log file path is ${file_path}"
 
 done
