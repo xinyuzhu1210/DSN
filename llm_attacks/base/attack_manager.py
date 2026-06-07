@@ -918,11 +918,11 @@ class AttackPrompt(object):
         stacked_tensor = torch.stack(all_losses, dim=0)
 
         # topk averaging
-        topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
-        loss = torch.mean(topk_values, dim=0)
+        # topk_values, _ = torch.topk(stacked_tensor,k=5,dim=0)
+        # loss = torch.mean(topk_values, dim=0)
 
         # taking the max value across all windows for each candidate suffix
-        # loss, _ = torch.max(stacked_tensor, dim=0)
+        loss, _ = torch.max(stacked_tensor, dim=0)
         
         # # only average the top 10% higher variance windows
         # variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
