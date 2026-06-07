@@ -41,7 +41,7 @@ do
         --config.allow_non_ascii=False \
         --config.n_train_data=$n \
         --config.n_test_data=25 \
-        --config.n_steps=1 \
+        --config.n_steps=500 \
         --config.data_offset=$data_offset \
         --config.test_steps=25 \
         --config.batch_size=512 \

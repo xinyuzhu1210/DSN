@@ -862,6 +862,7 @@ class AttackPrompt(object):
         # print("length=", len(self.test_prefixes))
         # print("logits shape", logits.shape)
         
+        # for max, top-k, variance, and entropy aggregation methods
         all_losses = []
         
         # loop over each refusal prefix/phrase
@@ -913,7 +914,7 @@ class AttackPrompt(object):
         # average the loss over all sliding windows
         # loss = loss/count_loss
 
-        print("all losses", all_losses)
+        # print("all losses", all_losses)
         stacked_tensor = torch.stack(all_losses, dim=0)
 
         # topk averaging
@@ -961,8 +962,8 @@ class AttackPrompt(object):
         # print("filtered tensor shape",filtered_stacked_tensor.shape)
 
         # print("values", topk_values.shape)
-        print("loss", loss)
-        print("loss shape", loss.shape)
+        # print("loss", loss)
+        # print("loss shape", loss.shape)
         # print("count loss", count_loss)
         # print("all losses", all_losses)
         # print("length all losses", len(all_losses))
