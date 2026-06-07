@@ -176,9 +176,15 @@ export model=llama31 # choose from: gemma, gemma2, llama2, llama2_13b, llama3, l
 # Variance: ../results_dsn/20260607-07:43:28 1E0/llama31_dsn_25_offset0.json
 # Entropy: ../results_dsn/20260607-07:45:53 1E0/llama31_dsn_25_offset0.json
 
+# Original list (all seed 42)
+# Top-k: ../results_dsn/20260607-07:48:14 1E0/llama31_dsn_25_offset0.json
+# max(): ../results_dsn/20260607-07:50:53 1E0/llama31_dsn_25_offset0.json
+# Variance: ../results_dsn/20260607-07:52:32 1E0/llama31_dsn_25_offset0.json
+# Entropy: ../results_dsn/20260607-07:54:37 1E0/llama31_dsn_25_offset0.json
+
 
 file_list=(
-    '../results_dsn/20260607-07:45:53 1E0/llama31_dsn_25_offset0.json'
+    '../results_dsn/20260607-07:48:14 1E0/llama31_dsn_25_offset0.json'
 )
 
 for file_path in "${file_list[@]}"
