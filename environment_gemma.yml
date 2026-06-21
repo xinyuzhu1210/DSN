@@ -1,0 +1,31 @@
+name: gemma4_gpu_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch>=2.2
+  - pytorch-cuda=12.1
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - tqdm
+  - spacy
+
+  - pip:
+      - git+https://github.com/huggingface/transformers.git
+      - accelerate>=0.30.0
+      - huggingface_hub>=0.23.0
+      - datasets
+      - safetensors
+      - sentencepiece
+      - protobuf
+      - bitsandbytes
+      - einops
+      - openai
+      - httpx
