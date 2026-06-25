@@ -22,14 +22,14 @@ Note that we have chosen a different `transformers` version from the default `GC
 cd /DSN/experiments/launch_scripts
 bash run_dsn_attack.sh
 ```
-To train DSN with a specific target model, set the `model=` variable in `run_dsn_attack.sh` accordingly. To train DSN without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train DSN with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
+To train DSN with a specific target model, set the `model` variable in `run_dsn_attack.sh` accordingly. To train DSN without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train DSN with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
 
 ## Training GCG
 ```bash
 cd /DSN/experiments/launch_scripts
 bash run_gcg_attack.sh
 ```
-Similarly, to train GCG with a specific target model, set the `model=` variable in `run_gcg_attack.sh` accordingly. To train GCG without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train GCG with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
+Similarly, to train GCG with a specific target model, set the `model` variable in `run_gcg_attack.sh` accordingly. To train GCG without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train GCG with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
 
 ## Evaluating DSN or GCG
 # Refusal Matching and Refusal Classifier evaluation
@@ -38,7 +38,7 @@ To evaluate DSN or GCG, the following file first has to be run:
 cd /DSN/experiments/eval_scripts
 bash lastStep_eval.sh
 ```
-This files generates all responses from the target LLM when applying the adversarial prompt with suffix, and evaluates the responses with the Refusing Matching or Refusal Classifier evaluation method. To run this file on a specific trained suffix, place the path of its corresponding .json file from the `/DSN/experiments/results_dsn` folder inside the `file_list` variable from  the `lastStep_eval.sh` file. To evaluate with the Refusal Matching method, uncomment its original code in the `EvaluateAttack()` class from the `DSN/llm_attacks/base/attack_manager.py` file and comment out the current code for the Refusal Classifier method. Additionally, to run the evaluation on a specific target model, set the `model=` variable in `lastStep_eval.sh` and the `_MODELS =` variable in `/DSN/experiments/evaluate_last_step.py` accordingly. Finally, to use random seeds during evaluation, set the desired seed in the `--config.random_seed_for_sampling_targets` flag. 
+This files generates all responses from the target LLM when applying the adversarial prompt with suffix, and evaluates the responses with the Refusing Matching or Refusal Classifier evaluation method. To run this file on a specific trained suffix, place the path of its corresponding .json file from the `/DSN/experiments/results_dsn` folder inside the `file_list` variable from  the `lastStep_eval.sh` file. To evaluate with the Refusal Matching method, uncomment its original code in the `EvaluateAttack()` class from the `DSN/llm_attacks/base/attack_manager.py` file and comment out the current code for the Refusal Classifier method. Additionally, to run the evaluation on a specific target model, set the `model` variable in `lastStep_eval.sh` and the `_MODELS` variable in `/DSN/experiments/evaluate_last_step.py` accordingly. Finally, to use random seeds during evaluation, set the desired seed in the `--config.random_seed_for_sampling_targets` flag. 
 
 After executing the `lastStep_eval.sh` file, the .json file for the AdvBench dataset is saved under the `/DSN/experiments/evalLastStep` folder and the .json file for the JailbreakBench dataset is saved under the `/DSN/experiments/evalJBBLastStep` folder.
 
