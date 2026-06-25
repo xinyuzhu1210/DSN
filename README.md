@@ -1,4 +1,4 @@
-# Addressing the Variability of Suffix-based Jailbreak Attacks
+# Characterizing the Variability of Suffix-based Jailbreak Attacks
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -32,7 +32,7 @@ bash run_gcg_attack.sh
 Similarly, to train GCG with a specific target model, set the `model` variable in `run_gcg_attack.sh` accordingly. To train GCG without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train GCG with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
 
 ## Evaluating DSN or GCG
-# Refusal Matching and Refusal Classifier evaluation
+### Refusal Matching and Refusal Classifier evaluation
 To evaluate DSN or GCG, the following file first has to be run: 
 ```bash
 cd /DSN/experiments/eval_scripts
@@ -42,7 +42,7 @@ This files generates all responses from the target LLM when applying the adversa
 
 After executing the `lastStep_eval.sh` file, the .json file for the AdvBench dataset is saved under the `/DSN/experiments/evalLastStep` folder and the .json file for the JailbreakBench dataset is saved under the `/DSN/experiments/evalJBBLastStep` folder.
 
-# HarmBench and Gemma 4 evaluation
+### HarmBench and Gemma 4 evaluation
 For HarmBench and Gemma 4, install the following environment: 
 ```bash
 conda env create -f environment_gemma.yml
