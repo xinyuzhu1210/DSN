@@ -29,3 +29,4 @@ dependencies:
       - einops
       - openai
       - httpx
+      - pillow

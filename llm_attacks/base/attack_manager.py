@@ -838,10 +838,6 @@ class AttackPrompt(object):
                 self.eps = 0.01
 
             def forward(self, input, target):
-                # print("input shape", input.shape)
-                # print("target shape", target.shape)
-                # print("unsqueeze", target.unsqueeze(1).shape)
-
                 # input logits has shape [batch_size, vocab, seq_len_refusal_phrase], where seq_len is based on the length of the refusal phrase
                 # convert input logits to probabilitites --> so each position in seq_len has a prob for every word in the vocab
                 probabilities = F.softmax(input, dim=1)
@@ -853,14 +849,10 @@ class AttackPrompt(object):
                 # compute the unlikelihood loss -log(1-p) 
                 loss = -torch.log(1 - p)
                 loss = torch.clamp(loss, min=0, max=10)
-                # print('loss shape', loss.shape)
+
                 # a high loss means that the model is likely to produce a refusal phrase a that specific window
                 return loss.squeeze(1)
         crit = UnlikelihoodLoss()
-
-        # print("refusal prefixes:", self.test_prefixes)
-        # print("length=", len(self.test_prefixes))
-        # print("logits shape", logits.shape)
 
         # for max, top-k, variance, and entropy aggregation methods
         # all_losses = []
@@ -873,14 +865,12 @@ class AttackPrompt(object):
                 pass
 
             step_count = 0
-            # print(self.test_prefixes_toks[j_in_algorithm])
 
             # slide over the output positions/sequence length (logits.shape[1])
             # input logits has shape [batch_size, seq_len, vocab], where seq_len is based on the input query length
             for loss_start in range(self._target_slice.start-1 , 99999):
                 # break when sequence length logits.shape[1] is covered
                 if loss_start + key_word_length > logits.shape[1]:
-                    # print('hi')
                     break
                 else:
                     step_count += 1
@@ -896,7 +886,6 @@ class AttackPrompt(object):
 
                 # compute unlikelihood loss, which gives a high loss if the model assigns a high prob to the refusal tokens
                 temp_loss = crit(logits[:,refusal_loss_slice,:].transpose(1,2), cross_loss_target)
-                # print('temp_loss shape', temp_loss.shape)
 
                 # refusal loss won't go through Cosine Decay, thus just taking the average
                 # average over the refusal tokens within the refusal phrase
@@ -906,15 +895,10 @@ class AttackPrompt(object):
                 # for max, top-k, variance, and entropy aggregation methods
                 # all_losses.append(temp_loss.mean(-1))
 
-                # if torch.var(temp_loss.mean(-1)) > 1e-4:
-                #     all_losses.append(temp_loss.mean(-1))
-                #     loss += temp_loss.mean(-1)
-                #     count_loss += 1
-
         # average the loss over all sliding windows
         loss = loss/count_loss
 
-        # print("all losses", all_losses)
+        # for max, top-k, variance, and entropy aggregation methods
         # stacked_tensor = torch.stack(all_losses, dim=0)
 
         # topk averaging
@@ -924,49 +908,22 @@ class AttackPrompt(object):
         # taking the max value across all windows for each candidate suffix
         # loss, _ = torch.max(stacked_tensor, dim=0)
         
-        # # only average the top 10% higher variance windows
+        # only average the top 10% higher variance windows
         # variance_windows = torch.var(stacked_tensor, dim=1, keepdim=True)
         # ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
         # topk_values, topk_indices = torch.topk(variance_windows,k=ten_percent,dim=0)
         # filtered_stacked_tensor = stacked_tensor[topk_indices.squeeze()]
         # loss = torch.mean(filtered_stacked_tensor, dim=0)
-        # print("stacked tensor", stacked_tensor)
-        # print("stacked tensor shape", stacked_tensor.shape)
-        # print("variance windows", variance_windows)
-        # print("variance windows shape", variance_windows.shape)
-        # print("ten percent", ten_percent)
-        # print(topk_values)
-        # print(topk_indices.squeeze())
-        # print(topk_indices.squeeze().shape)
-        # print(filtered_stacked_tensor)
-        # print(filtered_stacked_tensor.shape)
 
-        # # only average the top 10% lower entropy windows (lower entropy means that a few candidates might stick out more, so less uniform dist)
+        # only average the top 10% lower entropy windows (lower entropy means that a few candidates might stick out more, so less uniform dist)
         # prob = F.softmax(-stacked_tensor, dim=1)
         # entropy = Categorical(probs=prob).entropy()
         # ten_percent = math.ceil(stacked_tensor.shape[0] * 0.1)
-        # # get the lowest k values and indices
+        # get the lowest k values and indices
         # topk_values, topk_indices = torch.topk(-entropy,k=ten_percent,dim=0)
         # filtered_stacked_tensor = stacked_tensor[topk_indices]
         # loss = torch.mean(filtered_stacked_tensor, dim=0)
-        # print("prob", prob)
-        # print("prob shape", prob.shape)
-        # print("entropy", entropy)
-        # print("entropy shape", entropy.shape)
-        # print("neg entropy", -entropy)
-        # print("ten percent", ten_percent)
-        # print("topk vals", -topk_values)
-        # print("topk indices",topk_indices)
-        # print("topk indices shape",topk_indices.shape)
-        # print("filtered tensor",filtered_stacked_tensor)
-        # print("filtered tensor shape",filtered_stacked_tensor.shape)
 
-        # print("values", topk_values.shape)
-        # print("loss", loss)
-        # print("loss shape", loss.shape)
-        # print("count loss", count_loss)
-        # print("all losses", all_losses)
-        # print("length all losses", len(all_losses))
         return loss * self.para.augmented_loss_alpha
 
     def control_loss(self, logits, ids):
@@ -2033,7 +1990,7 @@ class EvaluateAttack(object):
         model, tokenizer = self.workers[0].model, self.workers[0].tokenizer
         tokenizer.padding_side = 'left'
 
-        # test
+        # refusal classifier
         # pipe = transformers.pipeline('text-classification', model='chameleon-lizard/xlmr-base-refusal-classifier', device=0, max_length=512, truncation=True)
         tokenizer_pipe_1 = AutoTokenizer.from_pretrained('Human-CentricAI/LLM-Refusal-Classifier', use_fast=False)
         pipe_1 = transformers.pipeline('text-classification', model='Human-CentricAI/LLM-Refusal-Classifier', tokenizer=tokenizer_pipe_1, device=0, max_length=512, truncation=True)
@@ -2133,9 +2090,8 @@ class EvaluateAttack(object):
                         gen_inputs.extend(prompt_inputs)
                         # # beam search candidates
                         # candidate_outputs.extend(sliced_beam_outputs)
-                        # print(all_outputs)
+                        
                         print(len(all_outputs))
-                        # print(gen_inputs)
                         print(len(gen_inputs))
 
                         # clear cache

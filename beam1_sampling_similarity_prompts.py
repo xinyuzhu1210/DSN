@@ -51,18 +51,6 @@ with open('beam1_output.txt', 'r') as file:
         if rm_jbb == True and not "rm jbb prompts" in line.strip():
             rm_jbb_list.append(line.strip())
 
-# print(harmbench_advbench)
-# print(len(harmbench_advbench))
-# print(gemma_advbench)
-# print(len(gemma_advbench))
-# print(harmbench_jbb)
-# print(len(harmbench_jbb))
-# print(len(gemma_jbb))
-# print(gemma_jbb)
-# print(len(rm_advbench_list))
-# print(rm_jbb_list)
-# print(len(rm_jbb_list))
-
 harmbench_advbench_sampling = []
 gemma_advbench_sampling = []
 harmbench_jbb_sampling = []

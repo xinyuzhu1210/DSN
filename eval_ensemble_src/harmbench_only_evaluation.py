@@ -103,7 +103,6 @@ def main():
     # logging and save the results
     parent_folder = os.path.dirname(log_file_path)
     new_eval_file_path = os.path.join(parent_folder, "results_HarmBench.json")
-    # new_eval_file_path = os.path.join(parent_folder, "results_qwen3.5.json")
     new_eval_file_path_gemma = os.path.join(parent_folder, "results_gemma4.json")
 
     with open(new_eval_file_path, 'w', encoding='utf-8') as json_file:
@@ -135,7 +134,6 @@ def main():
         print(f"{new_eval_file_path_gemma} has been saved, time taken is {time.time() - start} seconds, now is {current_time}")
 
     # print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
-    # print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Qwen3.5 score: {sum(results_HarmBench)} / {len(results_HarmBench)}")
     print(f"Refusal Matching Score: {test_jb_ASR} / {len(RM)} | Harmbench score: {sum(results_HarmBench)} / {len(results_HarmBench)} | Gemma4-26B A4B score: {sum(results_Gemma4)} / {len(results_Gemma4)}")
     
     print('Harmbench and Gemma evaluation is done!')

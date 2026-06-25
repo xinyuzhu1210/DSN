@@ -17,12 +17,6 @@ with open('../../../Desktop/beam_search_additional_experiment_qwen_DSN/sampling/
         if "Gemma4 classification" in line.strip():
             gemma4_outputs_beam1.append(line.strip())
 
-# print(len(harmbench_prompts_beam1))
-# print(len(harmbench_outputs_beam1))
-# print(len(gemma4_prompts_beam1))
-# print(len(gemma4_outputs_beam1))
-# print(harmbench_outputs_beam1)
-
 harmbench_prompts_beam9 = []
 harmbench_outputs_beam9 = []
 gemma4_prompts_beam9 = []
@@ -40,12 +34,6 @@ with open('../../../Desktop/beam_search_additional_experiment_qwen_DSN/beam9/see
             gemma4_prompts_beam9.append(line.strip())
         if "Gemma4 classification" in line.strip():
             gemma4_outputs_beam9.append(line.strip())
-
-# print(len(harmbench_prompts_beam9))
-# print(len(harmbench_outputs_beam9))
-# print(len(gemma4_prompts_beam9))
-# print(len(gemma4_outputs_beam9))
-# print(gemma4_outputs_beam9)
 
 harmbench_correct_scores = 0
 # count total nr of rejections from the harmbench classifier in the beam=9 case
@@ -79,9 +67,6 @@ print("Harmbench and Gemma4 advbench dataset")
 print(f"There are {harmbench_correct_scores}/{harmbench_total_negatives_beam9} ({(harmbench_correct_scores/harmbench_total_negatives_beam9) * 100}%) beam=1/sampling accepted cases for Harmbench.")
 print(f"There are {gemma4_correct_scores}/{gemma4_total_negatives_beam9} ({(gemma4_correct_scores/gemma4_total_negatives_beam9) * 100}%) beam=1/sampling accepted cases for Gemma4.")
 
-# print(harmbench_total_negatives_beam9)
-# print(gemma4_correct_scores)
-# print(gemma4_total_negatives_beam9)
 
 # jailbreakbench
 harmbench_prompts_beam1 = []
@@ -152,6 +137,7 @@ print("Harmbench and Gemma4 jailbreakbench dataset")
 print(f"There are {harmbench_correct_scores}/{harmbench_total_negatives_beam9} ({(harmbench_correct_scores/harmbench_total_negatives_beam9) * 100}%) beam=1/sampling accepted cases for Harmbench.")
 print(f"There are {gemma4_correct_scores}/{gemma4_total_negatives_beam9} ({(gemma4_correct_scores/gemma4_total_negatives_beam9) * 100}%) beam=1/sampling accepted cases for Gemma4.")
 
+
 # Refusal Matching
 RM_targets_advbench_beam1 = []
 RM_outputs_advbench_beam1 = []
@@ -180,10 +166,6 @@ with open('../../../Desktop/beam_search_additional_experiment_qwen_DSN/sampling/
         if "classifier 2" in line.strip() and training_samples_passed == True and jbb_dataset == True:
             RM_outputs_jbb_beam1.append(line.strip())
 
-# print(len(RM_targets_advbench_beam1))
-# print(len(RM_targets_jbb_beam1))
-# print(len(RM_outputs_advbench_beam1))
-# print(len(RM_outputs_jbb_beam1))
 
 RM_targets_advbench_beam9 = []
 RM_outputs_advbench_beam9 = []
@@ -210,11 +192,6 @@ with open('../../../Desktop/beam_search_additional_experiment_qwen_DSN/beam9/see
             RM_targets_jbb_beam9.append(line.strip())
         if "classifier 2" in line.strip() and training_samples_passed == True and jbb_dataset == True:
             RM_outputs_jbb_beam9.append(line.strip())
-
-# print(len(RM_targets_advbench_beam9))
-# print(len(RM_targets_jbb_beam9))
-# print(len(RM_outputs_advbench_beam9))
-# print(len(RM_outputs_jbb_beam9))
 
 advbench_correct_scores = 0
 advbench_total_negatives_beam9 = 0
