@@ -22,7 +22,7 @@ Note that we have chosen a different `transformers` version from the default `GC
 cd /DSN/experiments/launch_scripts
 bash run_dsn_attack.sh
 ```
-To train DSN with a specific target model, set the `model` variable in `run_dsn_attack.sh` accordingly. To train DSN without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train DSN with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
+To train DSN with a specific target model, set the `model` variable in `run_dsn_attack.sh` accordingly. To train DSN without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train DSN with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, and .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
 
 ## Training GCG
 ```bash
