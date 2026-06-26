@@ -29,7 +29,7 @@ To train DSN with a specific target model, set the `model` variable in `run_dsn_
 cd /DSN/experiments/launch_scripts
 bash run_gcg_attack.sh
 ```
-Similarly, to train GCG with a specific target model, set the `model` variable in `run_gcg_attack.sh` accordingly. To train GCG without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train GCG with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
+Similarly, to train GCG with a specific target model, set the `model` variable in `run_gcg_attack.sh` accordingly. To train GCG without any seeds set `--config.random_seed_for_sampling_targets` to -1 and to train GCG with seeds, set `--config.random_seed_for_sampling_targets` to seeds 41-45 respectively. The final .txt, .json, and .pth files will be stored under the `/DSN/experiments/results_dsn` folder.
 
 ## Evaluating DSN or GCG
 ### Refusal Matching and Refusal Classifier evaluation
