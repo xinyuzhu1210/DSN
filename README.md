@@ -81,14 +81,14 @@ python beam1_sampling_similarity_prompts.py
 Note, the beam1 and sampling .txt files were obtained by copying the printed output of `additional_beamsearch_experiment.py` to .txt files. The printed scores with the titles are, however, not included in this .txt file. 
 
 ## Case study on beam candidates
-To conduct the case study on beam candidates, we set num_return_sequences in the `EvaluateAttack()` class from `DSN/llm_attacks/base/attack_manager.py`, and uncomment all the beam candidates codes accordingly.
+To conduct the case study on beam candidates, we set num_return_sequences in the `EvaluateAttack()` class from `DSN/llm_attacks/base/attack_manager.py`, and uncomment all the beam candidates codes accordingly. After this, you can evaluate using `lastStep_eval.sh` and `launch_harmbench_eval.sh`, and observe the printed beam candidates in the output files. 
 
 ## Refusal Keyword List Adaptations
 To train DSN with different refusal keyword lists, we modified `DSN/experiments/main.py` first before running `run_dsn_attack.sh`. Speciffically, to 
 utilize the doubled refusal list, tripled refusal list, halved refusal list, or curated refusal list, uncomment the lists in `DSN/experiments/main.py` respectively. 
 
 ## Window Aggregation and Filtering
-For the refusal loss modifications, uncomment one of the the code for the top-k aggregation, max aggregation, variance filtering or entropy filtering in the `dsn_refusal_loss()` function from `DSN/llm_attacks/base/attack_manager.py` before training DSN with `run_dsn_attack.sh`. 
+For the refusal loss modifications, uncomment one of the the code for the top-k aggregation, max aggregation, variance filtering or entropy filtering in the `dsn_refusal_loss()` function from `DSN/llm_attacks/base/attack_manager.py` first before training DSN with `run_dsn_attack.sh`. 
 
 ## Integration of MAGIC
 To include MAGIC's contribution, exchange the current `sample_control()` funtion for the commented `sample_control()` funtion of MAGIC in `/DSN/llm_attacks/dsn/dsn_attack.py`. Afterwards, train DSN with `run_dsn_attack.sh`.
